@@ -1,11 +1,14 @@
 const { ApolloServer } = require('apollo-server-express');
+const { buildFederatedSchema } = require('@apollo/federation');
 const express = require('express');
 require('./config');
 
 const typeDefs = require('./schemas');
 const resolvers = require('./resolvers');
 
-const server = new ApolloServer({ typeDefs, resolvers });
+const server = new ApolloServer({ 
+    schema: buildFederatedSchema([{ typeDefs, resolvers }]),
+ });
 
 const app = express();
 server.applyMiddleware({ app });
