@@ -1,7 +1,7 @@
 const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
-    type Mimo {
+    type Mimo @key(fields: "id") {
         id: ID!
         title: String
         description: String

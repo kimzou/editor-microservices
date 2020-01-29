@@ -2,7 +2,13 @@ const Mimo = require('./models');
 
 const resolvers = {
     Query: {
-        getMimos: async (_, { id }) => await Mimo.findById(id),
+        getMimos: async () => {
+            try {
+                return await Mimo.find()
+            } catch (error) {
+                console.error(error)
+            }
+        }
     },
     Mutation: {
         addMimo: async (_, args) => {
@@ -13,7 +19,7 @@ const resolvers = {
                 return e.message;
             }
         }
-    }
+    },
 };
 
 module.exports = resolvers;

@@ -18,11 +18,4 @@ module.exports = {
             }
         }
     },
-    User: {
-        // create fetchUserById function
-        async __resolveReference(user, { fetchUserById }) {
-            console.log({user})
-            return fetchUserById(user.id);
-        }
-    }
 }
