@@ -6,12 +6,7 @@ module.exports = gql`
         userId(id: ID!): User,
         allUsers: [User]!,
     }
-    # type User @key(fields: "id") {
-    #     id: ID!
-    #     username: String
-    #     roles: Roles
-    # }
-    type User {
+    type User @key(fields: "id") {
         id: ID!
         username: String
         roles: Roles
