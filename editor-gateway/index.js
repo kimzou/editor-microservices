@@ -1,5 +1,6 @@
 const { ApolloServer } = require('apollo-server');
 const { ApolloGateway } = require("@apollo/gateway");
+import { graphql } from "graphql";
 
 const gateway = new ApolloGateway({
     serviceList: [
