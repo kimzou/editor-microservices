@@ -20,7 +20,11 @@ services:
         ports: 
             - "4002:4002"
         restart: always
-
+        links: 
+            - user-api
+            - mimo-api
+        command: bash -c "./wait-for-it.sh user-api:4001 -- npm start"
+        
     client:
         depends_on:
             - user-api

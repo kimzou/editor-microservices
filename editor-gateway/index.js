@@ -1,17 +1,19 @@
 const { ApolloServer } = require('apollo-server');
 const { ApolloGateway } = require("@apollo/gateway");
-import { graphql } from "graphql";
+require('dotenv').config()
 
+const { URI_USER, URI_MIMO } = process.env;
+console.log({ URI_MIMO, URI_USER})
 const gateway = new ApolloGateway({
     serviceList: [
-        { name: 'users', url: 'http://localhost:4001' },
-        { name: 'mimos', url: 'http://localhost:4000/graphql' },
+        { name: 'users', url: URI_USER },
+        { name: 'mimos', url: URI_MIMO },
     ]
 });
-
+// console.log({gateway})
 const server = new ApolloServer({
     gateway,
     subscriptions: false,
 });
-
+// console.log({server})
 server.listen(4002).then(({ url }) => console.log(`Server ready at ${url}`));
