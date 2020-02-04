@@ -2,12 +2,17 @@ import React from 'react';
 import { gql } from 'apollo-boost';
 import { useQuery} from '@apollo/react-hooks';
 
-const GET_ALL_USERS_AND_MIMOS = gql`
-  query {
+const GET_ALL_USERS = gql`
+  query users {
     allUsers {
       id
       username
     }
+  }
+`;
+
+const GET_ALL_MIMOS = gql`
+  query mimos {
     getMimos {
       id
       title
@@ -15,21 +20,46 @@ const GET_ALL_USERS_AND_MIMOS = gql`
   }
 `;
 
-const App = () => {
-  const { loading, error, data } = useQuery(GET_ALL_USERS_AND_MIMOS);
+const Users = () => {
+  const { loading, error, data } = useQuery(GET_ALL_USERS);
+  console.log({data})
+
   if (loading) return <p>Loading...</p>;
   if (error) console.error(error);
-  
+
   return (
     <>
       <h1>Users:</h1>
-      {data.allUsers && 
-        data.allUsers.map(user => <li key={user.id}>{user.username} (id {user.id})</li>)
+      {data && data.allUsers && 
+        data.allUsers.map(user => <li key={user.id}>{user.title} (id {user.id})</li>)
       }
+    </>
+  )
+}
+
+const Mimos = () => {
+  const { loading, error, data } = useQuery(GET_ALL_MIMOS);
+  console.log({data})
+
+  if (loading) return <p>Loading...</p>;
+  if (error) console.error(error);
+
+  return (
+    <>
       <h1>Mimos:</h1>
-      {data.getMimos && 
+      {data && data.getMimos && 
         data.getMimos.map(mimo => <li key={mimo.id}>{mimo.title} (id {mimo.id})</li>)
       }
+    </>
+  )
+}
+
+
+const App = () => {
+  return (
+    <>
+      <Users />
+      <Mimos />
     </>
   )
 }
