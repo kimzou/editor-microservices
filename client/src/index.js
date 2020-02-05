@@ -3,16 +3,29 @@ import ReactDOM from 'react-dom';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { ApolloClient } from 'apollo-boost';
+import { ApolloClient, ApolloLink } from 'apollo-boost';
 import { HttpLink } from "apollo-link-http"
 import { InMemoryCache } from "apollo-cache-inmemory"
+import { onError } from "apollo-link-error";
+
 
 const httpLink = new HttpLink({ uri: "http://localhost:4002" });
 
+const errorLink = onError(({ graphQLErrors }) => {
+    // if(graphQLErrors) {
+    //     graphQLErrors.map(({ message }) => {
+    //         return Error(message);
+    //     })
+    // }
+});
+
+const links = [errorLink, httpLink];
+
 const client = new ApolloClient({
-    link: httpLink,
+    link: ApolloLink.from(links),
     cache: new InMemoryCache(),
 })
+
 
 ReactDOM.render(
     <ApolloProvider client={client}>

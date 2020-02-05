@@ -14,6 +14,12 @@ const gateway = new ApolloGateway({
 const server = new ApolloServer({
     gateway,
     subscriptions: false,
+    formatError: (err) => {
+        if (err.message.startsWith("request to http://")) {
+            return new Error('server down');
+        }
+        return err;
+    }
 });
 
 server.listen(4002).then(({ url }) => console.log(`Server ready at ${url}`));
