@@ -20,29 +20,31 @@ const GET_ALL_MIMOS = gql`
   }
 `;
 
-const Error = props => {
+const Error = ({ service }) => {
   return (
-    <p color="red">
-      <i>Service {props.service} down</i>
+    <p style={{ color: "red" }}>
+      <i>Service {service} down</i>
     </p>
   )
 }
 
-const Users = props => {
+const Users = ({ service }) => {
+
   const { loading, error, data } = useQuery(GET_ALL_USERS);
-  console.log({ data })
-  const [msgError, setMsgError] = useState("")
-  // if (loading) return <p>Loading...</p>;
+
+  if (loading) return <p>Loading...</p>;
   if (error.message.includes("server down")) {
-    console.log("err.message")
+    return <Error service={service} />
   }
 
   return (
     <>
       <h1>Users:</h1>
-      {(data && data.allUsers)
-        ? data.allUsers.map(user => <li key={user.id}>{user.title} (id {user.id})</li>)
-      : <p>{msgError}</p>
+      {
+        (data && data.allUsers) && 
+        data.allUsers.map(user => 
+          <li key={user.id}>{user.title} (id {user.id})</li>
+        )
       }
     </>
   )
@@ -50,16 +52,19 @@ const Users = props => {
 
 const Mimos = () => {
   const { loading, error, data } = useQuery(GET_ALL_MIMOS);
-  console.log({ data })
 
   if (loading) return <p>Loading...</p>;
-  if (error) console.error(error);
+  if (error.message.includes("server down")) {
+    return <Error service={service} />
+  }
 
   return (
     <>
       <h1>Mimos:</h1>
-      {data && data.getMimos &&
-        data.getMimos.map(mimo => <li key={mimo.id}>{mimo.title} (id {mimo.id})</li>)
+      {(data && data.getMimos) &&
+        data.getMimos.map(mimo => 
+          <li key={mimo.id}>{mimo.title} (id {mimo.id})</li>
+        )
       }
     </>
   )
@@ -69,7 +74,7 @@ const Mimos = () => {
 const App = () => {
   return (
     <>
-      <Users service="Utilisateur" />
+      <Users service="User" />
       <Mimos service="MiMo" />
     </>
   )
