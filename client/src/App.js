@@ -1,7 +1,6 @@
 import React from 'react';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
-import Service from './Service';
 
 const GET_ALL_USERS = gql`
   query users {
@@ -35,8 +34,7 @@ const Users = ({ service }) => {
 
   if (loading) return <p>Loading...</p>;
   if (error) {
-    console.log({error})
-    if (error.message.includes("server down")) {
+    if (error.message.includes("Server down")) {
       return <Error service={service} />
     }
   }
@@ -59,8 +57,7 @@ const Mimos = ({ service }) => {
 
   if (loading) return <p>Loading...</p>;
   if (error) {
-    console.log({error})
-    if (error.message.includes("server down")) {
+    if (error.message.includes("Server down")) {
       return <Error service={service} />
     }
   }

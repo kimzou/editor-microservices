@@ -19,8 +19,4 @@ mongoose
 
 const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
-    formatError: (err) => { 
-        console.log('err stack',err.stack)
-        return err;
-    }
 });
