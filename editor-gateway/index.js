@@ -1,5 +1,6 @@
 const { ApolloServer } = require('apollo-server');
 const { ApolloGateway } = require("@apollo/gateway");
+const { errorHandling } = require("./utils/helpers");
 require('dotenv').config()
 
 const { URI_USER, URI_MIMO, LOCAL_USER, LOCAL_MIMO } = process.env;
@@ -14,12 +15,7 @@ const gateway = new ApolloGateway({
 const server = new ApolloServer({
     gateway,
     subscriptions: false,
-    formatError: (err) => {
-        if (err.message.startsWith("request to http://")) {
-            return new Error('server down');
-        }
-        return err;
-    }
+    formatError: err => errorHandling(err),
 });
 
 server.listen(4002).then(({ url }) => console.log(`Server ready at ${url}`));

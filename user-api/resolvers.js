@@ -5,7 +5,6 @@ module.exports = {
         allUsers: async () => {
             try {
                 return await User.find();
-                
             } catch (error) {
                 console.error(error)
             }

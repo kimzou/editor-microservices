@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { gql } from 'apollo-boost';
 import { useQuery } from '@apollo/react-hooks';
+import Service from './Service';
 
 const GET_ALL_USERS = gql`
   query users {
@@ -33,8 +34,11 @@ const Users = ({ service }) => {
   const { loading, error, data } = useQuery(GET_ALL_USERS);
 
   if (loading) return <p>Loading...</p>;
-  if (error.message.includes("server down")) {
-    return <Error service={service} />
+  if (error) {
+    console.log({error})
+    if (error.message.includes("server down")) {
+      return <Error service={service} />
+    }
   }
 
   return (
@@ -50,18 +54,22 @@ const Users = ({ service }) => {
   )
 }
 
-const Mimos = () => {
+const Mimos = ({ service }) => {
   const { loading, error, data } = useQuery(GET_ALL_MIMOS);
 
   if (loading) return <p>Loading...</p>;
-  if (error.message.includes("server down")) {
-    return <Error service={service} />
+  if (error) {
+    console.log({error})
+    if (error.message.includes("server down")) {
+      return <Error service={service} />
+    }
   }
 
   return (
     <>
       <h1>Mimos:</h1>
-      {(data && data.getMimos) &&
+      {
+        (data && data.getMimos) &&
         data.getMimos.map(mimo => 
           <li key={mimo.id}>{mimo.title} (id {mimo.id})</li>
         )
@@ -75,6 +83,7 @@ const App = () => {
   return (
     <>
       <Users service="User" />
+      {/* <Service name="Users" result="allUsers" query={GET_ALL_USERS} /> */}
       <Mimos service="MiMo" />
     </>
   )

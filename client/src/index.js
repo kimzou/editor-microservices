@@ -11,18 +11,8 @@ import { onError } from "apollo-link-error";
 
 const httpLink = new HttpLink({ uri: "http://localhost:4002" });
 
-const errorLink = onError(({ graphQLErrors }) => {
-    // if(graphQLErrors) {
-    //     graphQLErrors.map(({ message }) => {
-    //         return Error(message);
-    //     })
-    // }
-});
-
-const links = [errorLink, httpLink];
-
 const client = new ApolloClient({
-    link: ApolloLink.from(links),
+    link: httpLink,
     cache: new InMemoryCache(),
 })
 
