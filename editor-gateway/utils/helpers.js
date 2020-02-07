@@ -1,5 +1,4 @@
 const errorHandling = ({ message }) => {
-    console.log({ message })
     switch (true) {
         case (message.startsWith("request to http://")):
             const service = message.split(" ").splice(-1)

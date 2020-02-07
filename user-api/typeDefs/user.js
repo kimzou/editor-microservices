@@ -6,7 +6,7 @@ const user = gql`
         userId(id: ID!): User,
         allUsers: [User]!,
     }
-    type User @key(fields: "id") {
+    type User {
         id: ID!
         username: String
         roles: Roles

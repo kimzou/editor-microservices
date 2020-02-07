@@ -80,7 +80,6 @@ const App = () => {
   return (
     <>
       <Users service="User" />
-      {/* <Service name="Users" result="allUsers" query={GET_ALL_USERS} /> */}
       <Mimos service="MiMo" />
     </>
   )

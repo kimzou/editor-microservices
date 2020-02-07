@@ -3,7 +3,7 @@ const { buildFederatedSchema } = require('@apollo/federation');
 const express = require('express');
 require('./config');
 
-const typeDefs = require('./schemas');
+const typeDefs = require('./typeDefs/mimo');
 const resolvers = require('./resolvers');
 
 const server = new ApolloServer({ 
@@ -14,5 +14,5 @@ const app = express();
 server.applyMiddleware({ app });
 
 app.listen({ port: 4000 }, () =>
-console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
 );

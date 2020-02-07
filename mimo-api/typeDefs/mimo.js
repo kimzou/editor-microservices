@@ -1,19 +1,17 @@
 const { gql } = require('apollo-server-express');
 
-const typeDefs = gql`
-    type Mimo @key(fields: "id") {
+const mimo = gql`
+    type Mimo {
         id: ID!
         title: String
         description: String
     }
-    
-    type Query {
+    extend type Query {
         getMimos: [Mimo]
     }
-
-    type Mutation {
+    extend type Mutation {
         addMimo(title: String!, description: String!): Mimo
     }
 `;
 
-module.exports = typeDefs;
+module.exports = mimo;
