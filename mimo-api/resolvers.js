@@ -8,7 +8,7 @@ const resolvers = {
             } catch (error) {
                 console.error(error)
             }
-        }
+        },
     },
     Mutation: {
         addMimo: async (_, args) => {

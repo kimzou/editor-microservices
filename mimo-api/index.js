@@ -3,7 +3,7 @@ const { buildFederatedSchema } = require('@apollo/federation');
 const express = require('express');
 require('./config');
 
-const typeDefs = require('./typeDefs/mimo');
+const typeDefs = require('./typeDefs/typeDefs');
 const resolvers = require('./resolvers');
 
 const server = new ApolloServer({ 
