@@ -1,0 +1,22 @@
+{
+  "name": "rest-gateway",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon -r esm index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/federation": "^0.12.1",
+    "apollo-datasource-rest": "^0.7.0",
+    "apollo-server-express": "^2.10.1",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
+    "nodemon": "^2.0.2"
+  }
+}
