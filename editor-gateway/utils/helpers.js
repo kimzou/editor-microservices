@@ -4,7 +4,7 @@ const errorHandling = ({ message }) => {
             const service = message.split(" ").splice(-1)
             return new Error(`Server down: ${service}`);
         default:
-            console.log("swith default")
+            console.log("switch default")
             break;
     }
 }

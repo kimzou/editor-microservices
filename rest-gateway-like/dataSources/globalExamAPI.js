@@ -8,11 +8,9 @@ export default class GlobalExamAPI extends RESTDataSource {
 
     async getUser({ token }) {
         try {
-            console.log("getUser", { token })
             const user = await this.get("user", { token });
             console.log("user", user)
-            console.log("user[0]", user._id)
-            return user[0];
+            return {id: user._id, username: user.username };
         } catch (error) {
             console.error("error in getUser", error);
         }

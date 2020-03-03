@@ -3,7 +3,7 @@ const { ApolloGateway } = require("@apollo/gateway");
 const { errorHandling } = require("./utils/helpers");
 require('dotenv').config()
 
-const { URI_USER, URI_MIMO, LOCAL_USER, LOCAL_MIMO } = process.env;
+const { URI_USER, URI_MIMO, LOCAL_USER, LOCAL_MIMO, LOCAL_REST_GATEWAY } = process.env;
 
 const gateway = new ApolloGateway({
     serviceList: [
