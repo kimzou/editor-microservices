@@ -18,6 +18,14 @@
     "express": "^4.17.1",
     "graphql": "^14.6.0",
     "mongoose": "^5.8.9",
-    "nodemon": "^2.0.2"
+    "mongoose-findorcreate": "^3.0.0",
+    "nodemon": "^2.0.2",
+    "passport": "^0.4.1",
+    "passport-facebook": "^3.0.0",
+    "passport-github": "^1.1.0",
+    "passport-google-oauth20": "^2.0.0",
+    "passport-linkedin-oauth2": "^2.0.0",
+    "passport-twitter": "^1.0.4",
+    "pug": "^2.0.4"
   }
 }
