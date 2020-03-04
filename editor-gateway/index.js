@@ -7,8 +7,8 @@ const { URI_USER, URI_MIMO, LOCAL_USER, LOCAL_MIMO } = process.env;
 
 const gateway = new ApolloGateway({
     serviceList: [
-        { name: 'users', url: URI_USER || LOCAL_USER },
-        { name: 'mimos', url: URI_MIMO || LOCAL_MIMO },
+        { name: 'users', url: LOCAL_USER },
+        { name: 'mimos', url: LOCAL_MIMO },
     ]
 });
 
