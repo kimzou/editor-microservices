@@ -10,8 +10,30 @@ const UserSchema = new Schema({
         type: String,
         enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],
     },
-    googleID: String,
-    facebookID: String,
+    google: {
+        id: String,
+        lastName: String,
+        firstName: String,
+        token: String,
+    },
+    facebook: {
+        id: String,
+        lastName: String,
+        firstName: String,
+        token: String,
+    },
+    linkedin: {
+        id: String,
+        lastName: String,
+        firstName: String,
+        token: String,
+    },
+    twitter: {
+        id: String,
+        lastName: String,
+        firstName: String,
+        token: String,
+    }
 });
 
 UserSchema.plugin(findOrCreate);

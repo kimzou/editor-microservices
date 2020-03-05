@@ -55,12 +55,35 @@ passport.use(new GoogleStrategy({
     function(accessToken, refreshToken, profile, cb) {
         // console.log(profile);
         // console.log(accessToken);
-        User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value, googleID: profile.id }, (err, user) => {
-            console.log('new user created: ' + user);
-            if (err) console.log(err);
-            if (user) console.log(user);
-            return cb(null, profile);
-        });
+        // console.log(refreshToken);
+        User.findOne({'google.id': profile.id}, (err, user) => {
+            if (err) return cb(err);
+            if (!user) {
+                user = new User({
+                    username : profile.displayName,
+                    email: profile.emails[0].value,
+                    google: {
+                        id: profile.id,
+                        lastName: profile.name.familyName,
+                        firstName: profile.name.givenName,
+                        token: refreshToken
+                    }
+                });
+                user.save((err) => {
+                    console.log('new user created: ' + user);
+                    if (err) console.log(err);
+                    return cb(err, user);
+                });
+            } else {
+                console.log('user exists');
+                return cb(null, profile);
+            }
+        })
+        // User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value, socials: profile.id }, (err, user) => {
+        //     if (user) console.log('new user created: ' + user);
+        //     if (err) console.log(err);
+        //     return cb(null, profile);
+        // });
     }
 ));
 
@@ -75,12 +98,35 @@ passport.use(new FacebookStrategy({
         // console.log(profile);
         // console.log(profile._json);
         // console.log(accessToken);
-        User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value, facebookID: profile.id }, (err, user) => {
-            console.log('new user created: ' + user);
-            if (err) console.log(err);
-            if (user) console.log(user);
-            return cb(null, profile);
-        });
+        // console.log(refreshToken);
+        User.findOne({'facebook.id': profile.id}, (err, user) => {
+            if (err) return cb(err);
+            if (!user) {
+                user = new User({
+                    username : profile.displayName,
+                    email: profile.emails[0].value,
+                    facebook: {
+                        id: profile.id,
+                        lastName: profile.name.familyName,
+                        firstName: profile.name.givenName,
+                        token: accessToken
+                    }
+                });
+                user.save((err) => {
+                    console.log('new user created: ' + user);
+                    if (err) console.log(err);
+                    return cb(err, user);
+                });
+            } else {
+                console.log('user exists');
+                return cb(null, profile);
+            }
+        })
+        // User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value, facebookID: profile.id }, (err, user) => {
+        //     if (user) console.log('new user created: ' + user);
+        //     if (err) console.log(err);
+        //     return cb(null, profile);
+        // });
     }
 ));
 
@@ -94,12 +140,35 @@ passport.use(new LinkedInStrategy({
     function(accessToken, refreshToken, profile, done) {
         // console.log(profile);
         // console.log(accessToken);
-        User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value, linkedInID: profile.id }, (err, user) => {
-            console.log('new user created: ' + user);
-            if (err) console.log(err);
-            if (user) console.log(user);
-            done(err, user);
-        });
+        // console.log(refreshToken);
+        User.findOne({'linkedin.id': profile.id}, (err, user) => {
+            if (err) return done(err);
+            if (!user) {
+                user = new User({
+                    username : profile.displayName,
+                    email: profile.emails[0].value,
+                    linkedin: {
+                        id: profile.id,
+                        lastName: profile.name.familyName,
+                        firstName: profile.name.givenName,
+                        token: accessToken
+                    }
+                });
+                user.save((err) => {
+                    console.log('new user created: ' + user);
+                    if (err) console.log(err);
+                    return done(err, user);
+                });
+            } else {
+                console.log('user exists');
+                return done(err, profile);
+            }
+        })
+        // User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value }, (err, user) => {
+        //     if (user) console.log('new user created: ' + user);
+        //     if (err) console.log(err);
+        //     return done(err, user);
+        // });
     }
 ));
 
@@ -112,10 +181,9 @@ passport.use(new TwitterStrategy({
     function(token, tokenSecret, profile, cb) {
         console.log(profile);
         console.log(token);
-        User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value, twitterID: profile.id }, (err, user) => {
-            console.log('new user created: ' + user);
+        User.findOrCreate({ username: profile.displayName, email: profile.emails[0].value, 'twitter.id': profile.id, token: token }, (err, user) => {
+            if (user) console.log('new user created: ' + user);
             if (err) console.log(err);
-            if (user) console.log(user);
             return cb(null, profile);
         });
     }
@@ -165,4 +233,4 @@ app.get('/auth/twitter/callback',
     function(req, res) {
         // Successful authentication, redirect home.
         res.redirect('/');
-    });
+});
