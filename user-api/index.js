@@ -35,7 +35,7 @@ mongoose
             console.log(`Server ready at http://localhost:4001`)
         );
     })
-    .catch(e => console.error(e))
+    .catch(e => console.error(e));
 
 passport.serializeUser(function(user, done) {
     done(null, user);

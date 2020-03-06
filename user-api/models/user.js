@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
-const findOrCreate = require('mongoose-findorcreate');
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
+    firstname: String,
+    lastname: String,
     username: String,
     password: String,
-    email: String,
+    email: {
+        type: String,
+        required: true,
+    },
     roles: {
         type: String,
         enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],
@@ -35,7 +39,5 @@ const UserSchema = new Schema({
         token: String,
     }
 });
-
-UserSchema.plugin(findOrCreate);
 
 module.exports = mongoose.model('User', UserSchema);
