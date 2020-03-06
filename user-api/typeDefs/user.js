@@ -2,21 +2,21 @@ const { gql } = require('apollo-server');
 
 const user = gql`
     extend type Query {
-        me: User!,
-        user(id: ID!): User,
-        users: [User]!,
-        globalExam(token: String!): User,
-        # login(email: String!, password: String!): AuthPlayload
+        me: User!
+        user(id: ID!): User
+        users: [User]!
+        globalExam(token: String!): User
     }
     extend type Mutation {
-        register(email: String!, password: String!): AuthPlayload,
+        register(email: String!, password: String!): AuthPlayload
         login(email: String!, password: String!): AuthPlayload
+        loginAs(email: String!): AuthPlayload!
     }
     type User {
-        id: ID
+        id: ID!
         firstname: String
         lastname: String
-        email: String!
+        email: String
         roles: Roles
     }
     type AuthPlayload {

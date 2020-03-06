@@ -25,28 +25,10 @@ module.exports = {
         globalExam: (_, { token }) => {
             try {
                 const tokenDecoded = jwt.verify(token, secret);
-                const {firstname, lastname, email} = tokenDecoded;
+                const {email, firstname, lastname} = tokenDecoded;
                 return { email, firstname, lastname };
             } catch (error) {
                 console.log(error);
-            }
-        },
-        login: async (_, { email, password }) => {
-            try {
-                const res = await User.findOne({ email: email });
-                if (!res) return { error: "User not found" };
-
-                const passwordOk = await Bcrypt.compare(password, res.password);
-                if (!passwordOk) return { error: "Wrong password" };
-                
-                const token = await jwt.sign(
-                  { email: res.email, role: res.role },
-                  process.env.API_SECRET,
-                  { expiresIn: '1h' }
-                );
-                return { token: token };
-            } catch (error) {
-                console.error(error);
             }
         },
     },
@@ -60,7 +42,7 @@ module.exports = {
                 const passwordOk = await Bcrypt.compare(password, res.password);
                 if (!passwordOk) return { error: "Wrong password" };
                 
-                const token = await jwt.sign(
+                const token = jwt.sign(
                     { email: res.email, role: res.role },
                     process.env.API_SECRET,
                     { expiresIn: '1h' }
@@ -81,15 +63,31 @@ module.exports = {
                 newUser.password = await Bcrypt.hash(password, 10);
                 await newUser.save();
                 
-                const token = await jwt.sign(
-                    { email: email },
+                const token = jwt.sign(
+                    { id: newUser._id, email: email },
                     process.env.API_SECRET,
                     { expiresIn: '1h' }
                 );
-                return { token: token }
+                return { token: token };
             } catch (error) {
                 console.error(error);
             }
         },
+        loginAs: async (_, { email }) => {
+            console.log("login as");
+            try {
+                const user = await User.findOne({ email: email });
+                const token = jwt.sign(
+                    { email: user.email },
+                    process.env.API_SECRET,
+                    { expiresIn: '1h' }
+                );
+                console.log({token});
+
+                return { token: token };
+            } catch (error) {
+                console.error(error)
+            }
+        }, 
     }
 }
