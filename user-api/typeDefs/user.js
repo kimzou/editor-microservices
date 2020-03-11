@@ -1,9 +1,9 @@
-const { gql } = require('apollo-server');
+const { gql } = require('apollo-server-express');
 
 const user = gql`
     extend type Query {
-        me: User!
-        user(id: ID!): User
+        me: User
+        userById(id: ID!): User
         users: [User]!
         globalExam(token: String!): User
     }

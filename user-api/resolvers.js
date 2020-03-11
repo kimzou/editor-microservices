@@ -1,12 +1,20 @@
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
-const Bcrypt = require('bcrypt')
+const Bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const secret = process.env.API_SECRET;
 
 module.exports = {
     Query: {
+        me: async (_, __, { user } ) => {
+            try {
+                if (!user) return new Error('You must be authentificated !');
+                return await User.findById(user.id);
+            } catch (error) {
+                console.error(error);
+            }
+        },
         users: async () => {
             try {
                 return await User.find();
@@ -14,9 +22,9 @@ module.exports = {
                 console.error(error);
             }
         },
-        user: async (_, { id }) => {
+        userById: async (_, { id }) => {
             try {
-                return await User.findOne({ _id: id });
+                return await User.findById(id);
             } catch (error) {
                 console.error(error);
             }
@@ -25,7 +33,7 @@ module.exports = {
         globalExam: (_, { token }) => {
             try {
                 const tokenDecoded = jwt.verify(token, secret);
-                const {email, firstname, lastname} = tokenDecoded;
+                const { email, firstname, lastname } = tokenDecoded;
                 return { email, firstname, lastname };
             } catch (error) {
                 console.log(error);
@@ -41,13 +49,13 @@ module.exports = {
 
                 const passwordOk = await Bcrypt.compare(password, res.password);
                 if (!passwordOk) return { error: "Wrong password" };
-                
+                // console.log(res._id)
                 const token = jwt.sign(
-                    { email: res.email, role: res.role },
+                    { id: res._id, email: res.email, role: res.role },
                     process.env.API_SECRET,
-                    { expiresIn: '1h' }
+                    { expiresIn: '8h' }
                 );
-                return { token: token };
+                return { token };
             } catch (error) {
                 console.error(error);
             }
@@ -66,7 +74,7 @@ module.exports = {
                 const token = jwt.sign(
                     { id: newUser._id, email: email },
                     process.env.API_SECRET,
-                    { expiresIn: '1h' }
+                    { expiresIn: '8h' }
                 );
                 return { token: token };
             } catch (error) {
