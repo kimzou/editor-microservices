@@ -6,7 +6,8 @@ const LogOut = props => {
     const history = useHistory();
   
     const logOut = () => {
-      localStorage.removeItem("user");
+      localStorage.removeItem("token");
+      localStorage.removeItem("loginas");
       history.push("/");
     };
 

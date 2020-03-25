@@ -5,7 +5,7 @@ import { useHistory } from 'react-router-dom';
 
 const LoginAs = ({ match }) => {
     console.log(match.url);
-    return("lol");
+    return"lol";
 };
 
 export default LoginAs;

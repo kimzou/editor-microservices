@@ -3,18 +3,28 @@ const User = require('./models/user');
 const Bcrypt = require('bcrypt');
 require('dotenv').config();
 
-const secret = process.env.API_SECRET;
-
 module.exports = {
     Query: {
-        me: async (_, __, { user } ) => {
+        // get the actual connected user
+        me: async (_, __, { user, loginas } ) => {
+            // console.log("me user", {user})
+            console.log("me logonas", {loginas})
             try {
                 if (!user) return new Error('You must be authentificated !');
-                return await User.findById(user.id);
+                // const contextUser = await User.findById(user.id);
+                // const loginAsUser = await User.findById(loginAs.id);
+                // return loginAs ? { contextUser, loginAsUser } : contextUser;
+                let loginAsDecode;
+                if (loginas !== undefined) loginAsDecode = jwt.verify(loginas, process.env.JWT_SECRET);
+                const userLogged = await User.findById(loginAsDecode ? loginAsDecode.id : user.id);
+                console.log("me userLogged", {userLogged});
+                return userLogged;
+                // return loginAs ? await User.findById(loginAs.id) : await User.findById(user.id);
             } catch (error) {
                 console.error(error);
             }
         },
+        // get all users
         users: async () => {
             try {
                 return await User.find();
@@ -22,6 +32,7 @@ module.exports = {
                 console.error(error);
             }
         },
+        // get one user by hes id
         userById: async (_, { id }) => {
             try {
                 return await User.findById(id);
@@ -32,7 +43,7 @@ module.exports = {
         // root to retrive info from the connected user to send it to Global Exam
         globalExam: (_, { token }) => {
             try {
-                const tokenDecoded = jwt.verify(token, secret);
+                const tokenDecoded = jwt.verify(token, process.env.JWT_SECRET);
                 const { email, firstname, lastname } = tokenDecoded;
                 return { email, firstname, lastname };
             } catch (error) {
@@ -52,8 +63,8 @@ module.exports = {
                 // console.log(res._id)
                 const token = jwt.sign(
                     { id: res._id, email: res.email, role: res.role },
-                    process.env.API_SECRET,
-                    { expiresIn: '8h' }
+                    process.env.JWT_SECRET,
+                    { expiresIn: '24h' }
                 );
                 return { token };
             } catch (error) {
@@ -73,26 +84,29 @@ module.exports = {
                 
                 const token = jwt.sign(
                     { id: newUser._id, email: email },
-                    process.env.API_SECRET,
-                    { expiresIn: '8h' }
+                    process.env.JWT_SECRET,
+                    { expiresIn: '24h' }
                 );
                 return { token: token };
             } catch (error) {
                 console.error(error);
             }
         },
+        // return a token of the user we want to connect at portal
         loginAs: async (_, { email }) => {
             console.log("login as");
             try {
                 const user = await User.findOne({ email: email });
+                if(!user) throw new Error("User with this email not found");
                 const token = jwt.sign(
-                    { email: user.email },
-                    process.env.API_SECRET,
-                    { expiresIn: '1h' }
+                    { id: user._id, email: user.email },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '24h' }
                 );
-                console.log({token});
-
-                return { token: token };
+                console.log("login as token", token)
+                return { token };
+                // console.log("user loginas id ", user._id)
+                // return user._id;
             } catch (error) {
                 console.error(error)
             }

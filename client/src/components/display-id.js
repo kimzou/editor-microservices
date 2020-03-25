@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
-const DisplayId = props => {
-	const [token, setToken] = useState(props.token);
+const DisplayId = ({ token, id, email }) => {
+	// const [token, setToken] = useState(props.token);
 	// useEffect(() => {
 	// 	setToken(localStorage.getItem("user"))
 	// }, [token]);
 	return (
 	<>
-			<h1>Token user : {token}</h1>
-			<button onClick={() => setToken(localStorage.setItem("user", "5e00897f2419760808ec42e1"))}>
-					Put token
-			</button>
+			<h1>Token user : { token }</h1>
+			<h1>User : { email }</h1>
+			<h1>Login As : {  }</h1>
 	</>
 	)
 }
