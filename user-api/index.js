@@ -18,7 +18,6 @@ const server = new ApolloServer({
             console.log("in index user", {token, loginas})
             if (token === undefined) return null;
             const user = verify(token, process.env.JWT_SECRET);
-            // if(loginas) verify(loginas, process.env.JWT_SECRET);
             console.log("user connected in user index", {user})
             return { user, loginas };
         } catch (error) {

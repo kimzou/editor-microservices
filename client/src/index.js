@@ -50,6 +50,12 @@ import {
 //       });
 //     },
 //   })
+const cache = new InMemoryCache();
+cache.writeData({
+    data: {
+      token: localStorage.getItem('token'),
+    },
+});
 
 const client = new ApolloClient({
     link: new ApolloLink((operation, forward) => {
@@ -70,8 +76,10 @@ const client = new ApolloClient({
         uri: 'http://localhost:4002',
       })
     ),
-    cache: new InMemoryCache()
+    cache: cache
   });
+
+  
 
 ReactDOM.render(
     <ApolloProvider client={client}>

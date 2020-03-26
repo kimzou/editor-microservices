@@ -10,7 +10,7 @@ import {
 } from 'reactstrap';
 
 import { useAuth } from "../../context/authContext";
-
+import { useApolloClient } from "@apollo/react-hooks";
 
 const LOGIN_MUTATION = gql`
     mutation login($email: String!, $password: String!) {
@@ -27,6 +27,7 @@ const Login = props => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { updateToken, updateEmail } = useAuth();
+	const client = useApolloClient();
 
     const [loginUser, { loading, error, data }] = useMutation(LOGIN_MUTATION, {
         onError(error) {
@@ -38,7 +39,8 @@ const Login = props => {
                 console.log("on complete login", data.login.token)
                 updateToken(data.login.token);
                 updateEmail(email);
-                await localStorage.setItem('token', data.login.token, { expires: data.login.tokenExpiration });
+                localStorage.setItem('token', data.login.token, { expires: data.login.tokenExpiration });
+                client.writeData({ data: { token: data.login.token }});
                 props.history.push('/');
             } else if (data.login.error) {
                 alert(data.login.error);

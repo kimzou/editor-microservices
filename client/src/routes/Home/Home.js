@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useQuery } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
+import { useApolloClient } from "@apollo/react-hooks";
 
 import DisplayId from '../../components/display-id';
 import SwitchUserButton from '../../components/switch-user-button';
@@ -12,10 +13,10 @@ const ACTUAL_USER = gql`
 	query me {
 		me {
 			email
+			role
 		}
 	}
 `;
-
 
 const Home = props => {
 	// console.log("props", props.token)
@@ -23,6 +24,8 @@ const Home = props => {
 	console.log("home email", email)
 	const { updateEmail } = useAuth();
 	const history = useHistory();
+	const client = useApolloClient();
+
 	console.log("home use token", token);
 			
 	const { _, __, data, refetch } = useQuery(ACTUAL_USER, {
@@ -32,22 +35,9 @@ const Home = props => {
 		onCompleted(data) {
 			console.log("on complete", {data})
 			updateEmail(data.me.email);
+			client.writeData({ data: { isAdmin: data.me.role === "ADMIN" ? true : false }})
 		}
 	});
-	// useEffect(() => {
-	// 	refetchUser();
-	// });
-
-	const refetchUser = () => refetch();
-	// console.log({data})
-
-	// const historyToken = history.location.state ? history.location.state.token : null;
-	// console.log({historyToken})
-	// const homeHandle = () => {
-	// 	refetch();
-	// 	// props.token();
-	// 	history.push("/");
-	// }
 
 	return(
 		<>

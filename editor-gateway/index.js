@@ -7,7 +7,7 @@ require('dotenv').config()
 const { URI_USER, URI_MIMO, LOCAL_USER, LOCAL_MIMO } = process.env;
 
 class AuthenticatedDataSource extends RemoteGraphQLDataSource {
-    // attach key-value to the header before calling services
+    // set headers before calling services
     willSendRequest({ request, context }) {
         console.log('gateawy', {context})
         if(context.id) request.http.headers.set("userID", context.id);
@@ -34,14 +34,12 @@ const server = new ApolloServer({
         try {
             console.log("gateway context auto", req.headers.authorization)
             const tokenBearer = req.headers.authorization || "";
-            // id of the user we want to log with
             console.log("headers login as", req.headers.loginas)
             const loginas = req.headers.loginas || "";
             console.log("login as gateway", {loginas})
             if(tokenBearer === "" || undefined) return;
             const token = tokenBearer.replace("Bearer ", "");
             const { role } = verify(token, process.env.JWT_SECRET);
-            // const { id } = verify(loginAsToken === "" ? token : loginAsToken , process.env.JWT_SECRET);
             console.log("gateway", {token, role})
             return role === "ADMIN" ? { token, loginas } : { token };
         } catch (error) {
