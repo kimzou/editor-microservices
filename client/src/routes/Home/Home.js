@@ -6,7 +6,7 @@ import gql from 'graphql-tag';
 import DisplayId from '../../components/display-id';
 import SwitchUserButton from '../../components/switch-user-button';
 import LogOut from '../../components/log-out';
-import { AuthContext } from '../../context/authContext';
+import { AuthContext, useAuth } from '../../context/authContext';
 
 const ACTUAL_USER = gql`
 	query me {
@@ -19,19 +19,20 @@ const ACTUAL_USER = gql`
 
 const Home = props => {
 	// console.log("props", props.token)
-	const { token, ID } = useContext(AuthContext);
+	const { token, email } = useContext(AuthContext);
+	console.log("home email", email)
+	const { updateEmail } = useAuth();
 	const history = useHistory();
 	console.log("home use token", token);
-	// const { _, __, data, refetch } = useQuery(ACTUAL_USER, {
-	// 	onError(error) {
-		// 		console.log('Error : ', error)
-		// 	},
-		// });
 			
 	const { _, __, data, refetch } = useQuery(ACTUAL_USER, {
 		onError(error) {
 			console.log('Error : ', error)
 		},
+		onCompleted(data) {
+			console.log("on complete", {data})
+			updateEmail(data.me.email);
+		}
 	});
 	// useEffect(() => {
 	// 	refetchUser();
@@ -51,7 +52,7 @@ const Home = props => {
 	return(
 		<>
 			{/* {data && data.me && <h4>{data.me.email}</h4>} */}
-			<DisplayId token={token} id={ID} email={data && data.me && data.me.email} />
+			<DisplayId token={token} email={email} />
 			{/* <DisplayId token={token} id={ID} email={data && data.me && data.me.email} /> */}
 			{/* <DisplayId token={historyToken ? historyToken : props.token} /> */}
 			<hr />

@@ -17,13 +17,13 @@ const user = gql`
         firstname: String
         lastname: String
         email: String
-        roles: Roles
+        role: Role
     }
     type AuthPlayload {
         token: String
         error: String
     }
-    enum Roles {
+    enum Role {
         STUDENT
         INSTRUCTOR
         ADMIN

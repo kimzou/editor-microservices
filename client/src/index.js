@@ -40,10 +40,11 @@ import {
 
 // const client = new ApolloClient({
 //     uri: 'http://localhost:4002',
-//     request: operation => {
+//     request: async operation => {
+//     const token = await localStorage.getItem.getItem('token');
 //       operation.setContext({
 //         headers: {
-//             authorization: token && `Bearer ${token}`,
+//             authorization: token ? `Bearer ${token}` : "",
 //             loginas: localStorage.getItem("loginas") || "",
 //         },
 //       });
@@ -52,9 +53,13 @@ import {
 
 const client = new ApolloClient({
     link: new ApolloLink((operation, forward) => {
+        const token = localStorage.getItem("token");
+
+        // const token = await localStorage.getItem("token");
+        console.log("client index localstorage", token)
       operation.setContext({
         headers: {
-            authorization: localStorage.getItem("token") ? `Bearer ${localStorage.getItem("token")}` : "",
+            authorization: token ? `Bearer ${token}` : "",
             loginas: localStorage.getItem("loginas") || "",
             // userID: localStorage.getItem("userID") || "",
         }

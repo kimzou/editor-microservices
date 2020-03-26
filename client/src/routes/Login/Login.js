@@ -22,20 +22,23 @@ const LOGIN_MUTATION = gql`
 `;
 
 const Login = props => {
+    console.log({props})
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { updateToken } = useAuth();
+    const { updateToken, updateEmail } = useAuth();
 
     const [loginUser, { loading, error, data }] = useMutation(LOGIN_MUTATION, {
         onError(error) {
             console.log('Error : ', error)
         },
-        onCompleted(data) {
+        async onCompleted(data) {
             if (data.login.token) {
                 // set the auth provider
+                console.log("on complete login", data.login.token)
                 updateToken(data.login.token);
-                localStorage.setItem('token', data.login.token, { expires: data.login.tokenExpiration });
+                updateEmail(email);
+                await localStorage.setItem('token', data.login.token, { expires: data.login.tokenExpiration });
                 props.history.push('/');
             } else if (data.login.error) {
                 alert(data.login.error);

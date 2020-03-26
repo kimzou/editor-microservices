@@ -30,7 +30,7 @@ const LOGIN_AS = gql`
 // `;
 
 const SwitchUserButton = ({ email }) => {
-  const { updateToken } = useAuth();
+  const { updateToken, updateEmail } = useAuth();
   const history = useHistory();
   const [loginAs] = useMutation(LOGIN_AS, {
     variables: { email: email },
@@ -49,8 +49,9 @@ const SwitchUserButton = ({ email }) => {
     // updateToken(data.loginAs);
     // history.push({pathname: `/loginas/${email}`, state: { token: data.loginAs }});
     localStorage.setItem("loginas", token);
+    if(token) updateEmail(email);
     // localStorage.setItem("userID", data.loginAs);
-    history.push(`/loginas/${email}`);
+    history.replace(`/loginas/${email}`);
   }
 
   return (

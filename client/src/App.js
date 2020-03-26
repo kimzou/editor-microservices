@@ -15,7 +15,7 @@ import {
   Route,
   Redirect,
 } from "react-router-dom";
-
+ 
 const ACTUAL_USER = gql`
 	query me {
 		me {
@@ -27,33 +27,34 @@ const ACTUAL_USER = gql`
 const App = () => {
 
   const [token, setToken] = useState(localStorage.getItem("token"));
-  const [ID, setID] = useState(localStorage.getItem("userID"));
+  // const [ID, setID] = useState(localStorage.getItem("userID"));
   const [email, setEmail] = useState("");
 
-  const updateToken = data => setToken(localStorage.setItem("token", data));
-  const updateID = data => setID(localStorage.getItem("userID"), data);
+  const updateToken = data => setToken(data ? localStorage.setItem("token", data) : null);
+  // const updateID = data => setID(localStorage.getItem("userID"), data);
   const updateEmail = data => setEmail(data);
-
+console.log({email})
   useEffect(() => {
-    console.log("use effect")
+    console.log("use effect local", localStorage.getItem("token"))
+    console.log("use effect token", token)
     setToken(localStorage.getItem("token"));
-    setID(localStorage.getItem("userID"));
-  }, [token, ID, email, updateID, updateToken, updateEmail]);
+    // setID(localStorage.getItem("userID"));
+  }, [token]);
   console.log("app token", token)
 
 
-
+//TODO: parse url
   return (
     <>
-      <AuthContext.Provider value={{ token, ID, email, updateToken: updateToken, updateID: updateID, updateEmail }}>
+      <AuthContext.Provider value={{ token, email, updateToken: updateToken, updateEmail: updateEmail }}>
         <Router>
           <Switch>
-            <Route exact path="/" component={props => <Home {...props} email={email} />} />
-            <Route exact path="/home" render={props => <Home {...props} email={email} />} />
+            <Route exact path="/" component={Home} />} />
+            <Route exact path="/home" component={Home} />} />
             <Route exact path="/service" render={props => <Service {...props} />} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
-            <Route path="/loginas/:email" component={props => <Home {...props} email={email} />} />
+            <Route path="/loginas/:email" component={Home} />} />
             <Route component={NoMatch} />
           </Switch>
         </Router>

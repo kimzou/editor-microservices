@@ -40,10 +40,10 @@ const server = new ApolloServer({
             console.log("login as gateway", {loginas})
             if(tokenBearer === "" || undefined) return;
             const token = tokenBearer.replace("Bearer ", "");
-            const { id } = verify(token, process.env.JWT_SECRET);
+            const { role } = verify(token, process.env.JWT_SECRET);
             // const { id } = verify(loginAsToken === "" ? token : loginAsToken , process.env.JWT_SECRET);
-            console.log("gateway", {id, token})
-            return { id, token, loginas };
+            console.log("gateway", {token, role})
+            return role === "ADMIN" ? { token, loginas } : { token };
         } catch (error) {
             console.error(error)
         }

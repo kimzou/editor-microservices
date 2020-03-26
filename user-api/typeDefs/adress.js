@@ -4,7 +4,7 @@ const adress = gql`
     type Adress {
         id: ID!
         username: String
-        roles: Roles
+        role: Role
     }
 `;
 

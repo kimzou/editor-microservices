@@ -1,15 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-const DisplayId = ({ token, id, email }) => {
-	// const [token, setToken] = useState(props.token);
-	// useEffect(() => {
-	// 	setToken(localStorage.getItem("user"))
-	// }, [token]);
+const DisplayId = ({ token, email }) => {
 	return (
 	<>
-			<h1>Token user : { token }</h1>
-			<h1>User : { email }</h1>
-			<h1>Login As : {  }</h1>
+		<h1>Token user : { token }</h1>
+		<h1>User conected : { email }</h1>
 	</>
 	)
 }

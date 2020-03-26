@@ -10,6 +10,7 @@ module.exports = {
             // console.log("me user", {user})
             console.log("me logonas", {loginas})
             try {
+                //TODO: check roles
                 if (!user) return new Error('You must be authentificated !');
                 // const contextUser = await User.findById(user.id);
                 // const loginAsUser = await User.findById(loginAs.id);
@@ -17,7 +18,7 @@ module.exports = {
                 let loginAsDecode;
                 if (loginas !== undefined) loginAsDecode = jwt.verify(loginas, process.env.JWT_SECRET);
                 const userLogged = await User.findById(loginAsDecode ? loginAsDecode.id : user.id);
-                console.log("me userLogged", {userLogged});
+                console.log("me userLogged", userLogged.email);
                 return userLogged;
                 // return loginAs ? await User.findById(loginAs.id) : await User.findById(user.id);
             } catch (error) {
@@ -57,15 +58,17 @@ module.exports = {
             try {
                 const res = await User.findOne({ email: email });
                 if (!res) return { error: "User not found" };
-
+                console.log({res})
                 const passwordOk = await Bcrypt.compare(password, res.password);
                 if (!passwordOk) return { error: "Wrong password" };
                 // console.log(res._id)
                 const token = jwt.sign(
-                    { id: res._id, email: res.email, role: res.role },
+                    { id: res._id, email: res.email, role: res.role,},
                     process.env.JWT_SECRET,
                     { expiresIn: '24h' }
                 );
+                console.log("login token", token)
+                console.log("login res role", res.role )
                 return { token };
             } catch (error) {
                 console.error(error);
@@ -93,13 +96,14 @@ module.exports = {
             }
         },
         // return a token of the user we want to connect at portal
-        loginAs: async (_, { email }) => {
+        loginAs: async (_, { email }, { user }) => {
             console.log("login as");
             try {
-                const user = await User.findOne({ email: email });
-                if(!user) throw new Error("User with this email not found");
+                if(user.role !== "ADMIN") throw new Error("You must be admin");
+                const res = await User.findOne({ email: email });
+                if(!res) throw new Error("User with this email not found");
                 const token = jwt.sign(
-                    { id: user._id, email: user.email },
+                    { id: res._id, email: res.email },
                     process.env.JWT_SECRET,
                     { expiresIn: '24h' }
                 );
