@@ -9,31 +9,42 @@ const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 
 require('dotenv').config()
+const { verify } = require("jsonwebtoken");
 
 const resolvers = require('./resolvers');
 const typeDefs = require('./typeDefs/typeDefs');
 const { MONGO_USER, MONGO_PASS, MONGO_DB } = process.env;
 
 const User = require('./models/user');
-
 const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
     playground: false,
+    context: ({ req }) => {
+        try {
+            const token = req.headers.authorization;
+            const loginas = req.headers.loginas;
+            console.log("in index user", {token, loginas})
+            if (token === undefined) return null;
+            const user = verify(token, process.env.JWT_SECRET);
+            console.log("user connected in user index", {user})
+            return { user, loginas };
+        } catch (error) {
+            console.error(error)
+        }
+    }
 });
 
 const app = express();
 server.applyMiddleware({ app });
-
 app.use(passport.initialize());
 app.use(passport.session());
 
 mongoose
     .connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASS}@dnd-dtit4.mongodb.net/${MONGO_DB}?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => {
-        app.listen({ port: 4001 }, () =>
-            console.log(`Server ready at http://localhost:4001`)
-        );
+        { useNewUrlParser: true, useUnifiedTopology: true }, () => {
+        app.listen(4001, () => {
+            console.log(`Server listening on port http://localhost:4001/graphql`);
+        });
     })
     .catch(e => console.error(e));
 

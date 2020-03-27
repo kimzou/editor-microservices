@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server');
+const { gql } = require('apollo-server-express');
 const { mergeTypes } = require('merge-graphql-schemas');
 
 const root = require('./root');
