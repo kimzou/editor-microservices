@@ -18,6 +18,7 @@ const user = gql`
         lastname: String
         email: String
         role: Role
+        products: [Product]
     }
     type AuthPlayload {
         token: String

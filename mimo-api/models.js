@@ -6,6 +6,18 @@ const mimoSchema = new Schema({
   description: String
 });
 
-const Mimo = mongoose.model('Mimo', mimoSchema, 'mimo'); 
+const courseSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  mimos: [{
+    type: Schema.Types.ObjectId,
+    ref: "mimo"
+  }]
+});
 
-module.exports = Mimo;
+const Mimo = mongoose.model('Mimo', mimoSchema, 'mimo'); 
+const Course = mongoose.model("Course", courseSchema, 'course');
+
+module.exports = { Mimo, Course };

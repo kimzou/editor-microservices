@@ -1,5 +1,4 @@
-const Mimo = require('./models');
-
+const { Mimo, Course} = require('./models');
 const resolvers = {
     Query: {
         getMimos: async () => {
@@ -9,6 +8,13 @@ const resolvers = {
                 console.error(error)
             }
         },
+        getCourses: async () => {
+            try {
+                await Course.find();
+            } catch (error) {
+                console.error(error);
+            }
+        }
     },
     Mutation: {
         addMimo: async (_, args) => {
@@ -20,6 +26,33 @@ const resolvers = {
             }
         }
     },
+    Course: {
+        // find mimos attach to the course collection
+        mimos: async parent => {
+             try {
+                return await Mimo.find().where('_id').in(parent.mimos).exec();
+             } catch (error) {
+                 console.error(error);
+             }
+        }
+    },
+    // Course: {
+    //     // find mimos attach to the course collection
+    //     async mimos(parent) {
+    //          try {
+    //             console.log("mimos find", await Mimo.find({_id: parent._id}))
+    //             console.log("mimos array", Mimo.find({_id: parent._id}).toArray())
+    //             return await Mimo.find({_id: parent._id}).toArray().map(obj => obj._id = obj._id.toString());
+    //          } catch (error) {
+    //              console.error(error);
+    //          }
+    //     }
+    // },
+    Mimo: {
+        course: async () => {
+            console.log("courseee")
+        }
+    }
 };
 
 module.exports = resolvers;

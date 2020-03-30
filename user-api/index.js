@@ -18,7 +18,7 @@ const { MONGO_USER, MONGO_PASS, MONGO_DB } = process.env;
 const User = require('./models/user');
 const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
-    playground: false,
+    playground: true,
     context: ({ req }) => {
         try {
             const token = req.headers.authorization;

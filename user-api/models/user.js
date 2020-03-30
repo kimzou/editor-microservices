@@ -18,6 +18,10 @@ const UserSchema = new Schema({
         type: String,
         enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],
     },
+    products: [{
+        type: Schema.Types.ObjectId,
+        ref: "Product"
+    }],
     google: {
         id: String,
         lastName: String,
