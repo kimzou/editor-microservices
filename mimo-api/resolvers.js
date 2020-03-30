@@ -10,7 +10,7 @@ const resolvers = {
         },
         getCourses: async () => {
             try {
-                await Course.find();
+                return await Course.find();
             } catch (error) {
                 console.error(error);
             }
