@@ -14,6 +14,13 @@ const resolvers = {
             } catch (error) {
                 console.error(error);
             }
+        },
+        getCourse: async (_, { id }) => {
+            try {
+                return await Course.findById(id);
+            } catch (error) {
+                console.error(error);
+            }
         }
     },
     Mutation: {

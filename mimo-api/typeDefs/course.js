@@ -8,6 +8,7 @@ const course = gql`
     }
     extend type Query {
         getCourses: [Course]
+        getCourse(id: ID!): Course
     }
 `;
 
