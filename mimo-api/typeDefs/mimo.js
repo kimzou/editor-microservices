@@ -5,12 +5,14 @@ const mimo = gql`
         id: ID!
         title: String
         description: String
+        price: Int
     }
     extend type Query {
         getMimos: [Mimo]
     }
     extend type Mutation {
         addMimo(title: String!, description: String!): Mimo
+        buyMimo(mimoId: ID!, token: String): String
     }
 `;
 

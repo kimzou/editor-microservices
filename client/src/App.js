@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import gql from 'graphql-tag';
 import { useQuery } from '@apollo/react-hooks';
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 
 import { AuthContext } from "./context/authContext";
 import { Service } from "./routes/Service"
@@ -24,6 +26,8 @@ const ACTUAL_USER = gql`
 		}
 	}
 `;
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUB_KEY);
 
 const App = () => {
 
@@ -56,7 +60,9 @@ console.log({email})
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Route path="/loginas/:email" component={Home} />
-            <Route path="/course" component={Course} />
+            {/* <Elements stripe={stripePromise}> */}
+              <Route path="/course" component={Course} />
+            {/* </Elements> */}
             <Route component={NoMatch} />
           </Switch>
         </Router>

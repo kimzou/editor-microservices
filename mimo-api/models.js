@@ -3,7 +3,8 @@ const Schema = mongoose.Schema;
 
 const mimoSchema = new Schema({
   title: String,
-  description: String
+  description: String,
+  price: Number
 });
 
 const courseSchema = new Schema({

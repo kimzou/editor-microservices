@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('./models/user');
+const Product = require('./models/product')
 const Bcrypt = require('bcrypt');
 require('dotenv').config();
 
@@ -8,7 +9,7 @@ module.exports = {
         // get the actual connected user
         me: async (_, __, { user, loginas } ) => {
             // console.log("me user", {user})
-            console.log("me logonas", {loginas})
+            // console.log("me logonas", {loginas})
             try {
                 //TODO: check roles
                 if (!user) return new Error('You must be authentificated !');
@@ -18,7 +19,7 @@ module.exports = {
                 let loginAsDecode;
                 if (loginas !== undefined) loginAsDecode = jwt.verify(loginas, process.env.JWT_SECRET);
                 const userLogged = await User.findById(loginAsDecode ? loginAsDecode.id : user.id);
-                console.log("me userLogged", userLogged.email);
+                // console.log("me userLogged", userLogged);
                 return userLogged;
                 // return loginAs ? await User.findById(loginAs.id) : await User.findById(user.id);
             } catch (error) {
@@ -115,5 +116,17 @@ module.exports = {
                 console.error(error)
             }
         }, 
-    }
+    },
+    // User: {
+    //     products: async (parent) => {
+    //         console.log("parent", parent.products)
+    //         console.log("find ", await Product.find())
+    //         try {
+    //             console.log("user products ", await Product.find());
+    //             // return await Product.find().where('_id').in(parent.products).exec();
+    //         } catch (error) {
+    //             console.error("product", error)
+    //         }
+    //     }
+    // }
 }
