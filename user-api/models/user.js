@@ -5,7 +5,7 @@ const UserSchema = new Schema({
     firstname: String,
     lastname: String,
     username: String,
-    password: String,
+    password: { type: String, required: true },
     email: { type: String, required: true },
     verifiedAccount: { type: Boolean, default: false },
     emailConfirmToken: String,
@@ -14,6 +14,7 @@ const UserSchema = new Schema({
     roles: {
         type: String,
         enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],
+        default: "STUDENT",
     },
     google: {
         id: String,
