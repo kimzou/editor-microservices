@@ -6,10 +6,11 @@ const UserSchema = new Schema({
     lastname: String,
     username: String,
     password: String,
-    email: {
-        type: String,
-        required: true,
-    },
+    email: { type: String, required: true },
+    verifiedAccount: { type: Boolean, default: false },
+    emailConfirmToken: String,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
     roles: {
         type: String,
         enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],

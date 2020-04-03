@@ -18,7 +18,7 @@ const User = require('./models/user');
 
 const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
-    playground: false,
+    playground: true,
 });
 
 const app = express();
@@ -29,7 +29,7 @@ app.use(passport.session());
 
 mongoose
     .connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASS}@dnd-dtit4.mongodb.net/${MONGO_DB}?retryWrites=true&w=majority`,
-    { useNewUrlParser: true, useUnifiedTopology: true })
+    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     .then(() => {
         app.listen({ port: 4001 }, () =>
             console.log(`Server ready at http://localhost:4001`)
@@ -193,15 +193,20 @@ passport.use(new TwitterStrategy({
 app.set('views', __dirname + '/views');
 app.set('view engine', 'pug');
 
-app.get('/',
-    function(req, res) {
-        res.render('home');
-});
+// app.get('/',
+//     function(req, res) {
+//         res.render('home');
+// });
 
-app.get('/login',
-    function(req, res) {
-        res.render('login');
-});
+// app.get('/login',
+//     function(req, res) {
+//         res.render('login');
+// });
+
+// app.get('/register',
+//     function(req, res) {
+//         res.render('register');
+// });
 
 app.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));

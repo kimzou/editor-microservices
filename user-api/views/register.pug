@@ -1,0 +1,14 @@
+html
+    head
+        style
+            include ../style.css
+        title Auth
+    body
+        form(method='POST' action='/register')
+        label(for='email') Email:
+            input(type='email', placeholder='name@email.com' name='email')
+        label(for='pw') Password:
+            input(type='password' name='password')
+
+        button(type='submit') Valider
+            
