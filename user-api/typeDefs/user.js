@@ -12,7 +12,6 @@ const user = gql`
         register(email: String!, password: String!): AuthPlayload
         login(email: String!, password: String!): AuthPlayload
         loginAs(email: String!): AuthPlayload
-        # buyMimo(mimoId: ID!, token: String, amount: Int): String
         checkoutSession(userId: String, email: String, name: String!, description: String, amount: Int!, successUrl: String!, cancelUrl: String!): String
     }
     type User {

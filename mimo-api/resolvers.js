@@ -45,23 +45,6 @@ const resolvers = {
              }
         }
     },
-    // Course: {
-    //     // find mimos attach to the course collection
-    //     async mimos(parent) {
-    //          try {
-    //             console.log("mimos find", await Mimo.find({_id: parent._id}))
-    //             console.log("mimos array", Mimo.find({_id: parent._id}).toArray())
-    //             return await Mimo.find({_id: parent._id}).toArray().map(obj => obj._id = obj._id.toString());
-    //          } catch (error) {
-    //              console.error(error);
-    //          }
-    //     }
-    // },
-    Mimo: {
-        course: async () => {
-            console.log("courseee")
-        }
-    }
 };
 
 module.exports = resolvers;

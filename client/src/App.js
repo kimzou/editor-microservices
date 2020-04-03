@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
-import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
 import { AuthContext } from "./context/authContext";
@@ -17,23 +15,12 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Redirect,
 } from "react-router-dom";
  
-const ACTUAL_USER = gql`
-	query me {
-		me {
-			email
-		}
-	}
-`;
-
-const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUB_KEY);
 
 const App = () => {
 
   const [token, setToken] = useState(localStorage.getItem("token"));
-  // const [ID, setID] = useState(localStorage.getItem("userID"));
   const [email, setEmail] = useState("");
 
   const updateToken = data => setToken(data ? localStorage.setItem("token", data) : null);
@@ -61,10 +48,8 @@ console.log({email})
             <Route exact path="/register" component={Register} />
             <Route exact path="/login" component={Login} />
             <Route path="/loginas/:email" component={Home} />
-            {/* <Elements stripe={stripePromise}> */}
-              <Route exact path="/course" component={Course} />
-              <Route path="/course/success/:session_id" component={Success} />
-            {/* </Elements> */}
+            <Route exact path="/course" component={Course} />
+            <Route path="/course/success/:session_id" component={Success} />
             <Route component={NoMatch} />
           </Switch>
         </Router>

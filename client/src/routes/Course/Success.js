@@ -1,6 +1,6 @@
 import React from 'react';
 import gql from 'graphql-tag';
-import { Mutation, Query } from 'react-apollo';
+import { Query } from 'react-apollo';
 import { useParams, useHistory } from 'react-router-dom';
 
 const BUY_MIMO = gql`
@@ -13,13 +13,10 @@ const Success = () => {
     let { session_id } = useParams();
     const history = useHistory();
     session_id = session_id.replace("session_id=", "");
-    console.log({ session_id });
     return(
         <Query 
             query={BUY_MIMO} 
             variables = {{ sessionId: session_id }}
-            // onCompleted={data => {
-            // }}
         >
             {({ data, error }) => {
                 if (error) return `Error! ${error.message}`;
@@ -31,8 +28,6 @@ const Success = () => {
                         </button>
                     </>
                 )
-
-                // buyMimo({ variables: { sessionId: session_id} })
             }}
         </Query>
     );
