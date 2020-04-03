@@ -6,11 +6,14 @@ const user = gql`
         userById(id: ID!): User
         users: [User]
         globalExam(token: String!): User
+        buyMimo(sessionId: String!): String
     }
     extend type Mutation {
         register(email: String!, password: String!): AuthPlayload
         login(email: String!, password: String!): AuthPlayload
         loginAs(email: String!): AuthPlayload
+        # buyMimo(mimoId: ID!, token: String, amount: Int): String
+        checkoutSession(userId: String, email: String, name: String!, description: String, amount: Int!, successUrl: String!, cancelUrl: String!): String
     }
     type User {
         id: ID!
@@ -19,6 +22,7 @@ const user = gql`
         email: String
         role: Role
         products: [Product]
+        stripeId: String 
     }
     type AuthPlayload {
         token: String

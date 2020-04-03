@@ -12,6 +12,7 @@ import { LoginAs } from "./routes/LoginAs";
 import { Register } from "./routes/Register";
 import { Login } from "./routes/Login";
 import { Course } from "./routes/Course";
+import Success from "./routes/Course/Success"
 import {
   BrowserRouter as Router,
   Switch,
@@ -61,7 +62,8 @@ console.log({email})
             <Route exact path="/login" component={Login} />
             <Route path="/loginas/:email" component={Home} />
             {/* <Elements stripe={stripePromise}> */}
-              <Route path="/course" component={Course} />
+              <Route exact path="/course" component={Course} />
+              <Route path="/course/success/:session_id" component={Success} />
             {/* </Elements> */}
             <Route component={NoMatch} />
           </Switch>

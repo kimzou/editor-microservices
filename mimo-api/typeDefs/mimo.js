@@ -12,7 +12,6 @@ const mimo = gql`
     }
     extend type Mutation {
         addMimo(title: String!, description: String!): Mimo
-        buyMimo(mimoId: ID!, token: String): String
     }
 `;
 

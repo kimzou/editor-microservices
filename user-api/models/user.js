@@ -20,6 +20,7 @@ const UserSchema = new Schema({
         enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],
     },
     products: ProductSchema,
+    stripeId: String,
     google: {
         id: String,
         lastName: String,

@@ -10,7 +10,17 @@ const resolvers = require('./resolvers');
 const server = new ApolloServer({ 
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
     context: ({ req }) => {
-        console.log(req.headers.authorization)
+        try {
+            const token = req.headers.authorization;
+            if (token) {
+                const user = verify(token, process.env.JWT_SECRET);
+                return { user };
+            } else {
+                throw Error("not authentificated")
+            }
+        } catch (error) {
+            console.error(error)
+        }
     }
  });
 

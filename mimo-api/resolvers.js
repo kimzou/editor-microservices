@@ -1,5 +1,4 @@
 const { Mimo, Course} = require('./models');
-const stripe = require("./stripe");
 require("dotenv").config();
 
 const resolvers = {
@@ -33,31 +32,6 @@ const resolvers = {
                 return response;
             } catch(e) {
                 return e.message;
-            }
-        },
-        buyMimo: async (_, { mimoId, token, amount }, { user }) => {
-            console.log("buy mimo");
-            try {
-                // if(!user) throw new Error("You must be connected");
-                console.log({mimoId, token})
-                // const customer = await stripe.customers.create({
-                //     // email: user.email,
-                //     source: token,
-                //     plan: process.env.STRIPE_PRODUCT_PLAN 
-                // })
-
-                // console.log({customer})
-
-                // const stripeId = customer.id;
-                // return stripeId;
-                stripe.payouts.create({
-                    amount: amount, 
-                    currency: 'eur'
-                });
-
-                //TODO: update product user
-            } catch (error) {
-                console.error(error);
             }
         },
     },
