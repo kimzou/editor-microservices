@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import gql from 'graphql-tag';
-import { loadStripe } from '@stripe/stripe-js';
-
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+} from "react-router-dom";
+ 
 import { AuthContext } from "./context/authContext";
 import { Service } from "./routes/Service"
 import { Home } from "./routes/Home"
@@ -11,12 +14,7 @@ import { Register } from "./routes/Register";
 import { Login } from "./routes/Login";
 import { Course } from "./routes/Course";
 import Success from "./routes/Course/Success"
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from "react-router-dom";
- 
+import Mimo from "./routes/Mimo/Mimo"
 
 const App = () => {
 
@@ -49,6 +47,7 @@ console.log({email})
             <Route exact path="/login" component={Login} />
             <Route path="/loginas/:email" component={Home} />
             <Route exact path="/course" component={Course} />
+            <Route path="/mimo/:id" component={Mimo} />
             <Route path="/course/success/:session_id" component={Success} />
             <Route component={NoMatch} />
           </Switch>

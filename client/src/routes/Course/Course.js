@@ -69,23 +69,25 @@ const BuyMimo =  ({ userId, price, email, name, description }) => {
 const Course = () => {
     return(
         <Query query={GET_COURSE_AND_USER_INFO}>
-            {({ data, loading}) => {
+            {({ data, loading, error }) => {
                 if(loading) return <p>loading...</p>
+                if(error) return `Error! ${error.message}`
                 const { getCourse, me } = data;
                 const productsId = me.products.map( o => o.mimoId );
                 return (
                     <div>
                         <h1>Cours : {getCourse.title}</h1>
                         {getCourse.mimos.map((mimo, index) => {
-                            return (<div key={mimo.id} style={{ margin: 20, border: "solid 2px grey" }}>
+                            return (
+                                <div key={mimo.id} style={{ margin: 20, border: "solid 2px grey" }}>
                                     {(index === 0 || productsId.includes(mimo.id))
-                                        ? <Link to="#">{mimo.title}</Link>
+                                        ? <Link to={`/mimo/${mimo.id}`}>{mimo.title}</Link>
                                         : mimo.title
                                     }
                                     <br/>
                                     {mimo.description}<br/>
                                     {mimo.price}<br/>
-                                    {!productsId.includes(mimo.id) && 
+                                    {!productsId.includes(mimo.id) && index !== 0 && 
                                         <BuyMimo 
                                             price={mimo.price} 
                                             email={me.email} 

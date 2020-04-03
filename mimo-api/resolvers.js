@@ -1,4 +1,4 @@
-const { Mimo, Course} = require('./models');
+const { Mimo, Course } = require('./models');
 require("dotenv").config();
 
 const resolvers = {
@@ -6,6 +6,13 @@ const resolvers = {
         getMimos: async () => {
             try {
                 return await Mimo.find()
+            } catch (error) {
+                console.error(error)
+            }
+        },
+        getMimo: async (_, { id }) => {
+            try {
+                return await Mimo.findById(id);
             } catch (error) {
                 console.error(error)
             }

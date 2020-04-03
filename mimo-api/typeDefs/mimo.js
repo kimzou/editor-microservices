@@ -9,6 +9,7 @@ const mimo = gql`
     }
     extend type Query {
         getMimos: [Mimo]
+        getMimo(id: ID!): Mimo!
     }
     extend type Mutation {
         addMimo(title: String!, description: String!): Mimo
