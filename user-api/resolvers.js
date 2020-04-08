@@ -2,13 +2,14 @@ const jwt = require('jsonwebtoken');
 const User = require('./models/user');
 const Bcrypt = require('bcrypt');
 require('dotenv').config();
+const stripe = require("./stripe");
 
 module.exports = {
     Query: {
         // get the actual connected user
         me: async (_, __, { user, loginas } ) => {
             // console.log("me user", {user})
-            console.log("me logonas", {loginas})
+            // console.log("me logonas", {loginas})
             try {
                 //TODO: check roles
                 if (!user) return new Error('You must be authentificated !');
@@ -18,7 +19,7 @@ module.exports = {
                 let loginAsDecode;
                 if (loginas !== undefined) loginAsDecode = jwt.verify(loginas, process.env.JWT_SECRET);
                 const userLogged = await User.findById(loginAsDecode ? loginAsDecode.id : user.id);
-                console.log("me userLogged", userLogged.email);
+                // console.log("me userLogged", userLogged);
                 return userLogged;
                 // return loginAs ? await User.findById(loginAs.id) : await User.findById(user.id);
             } catch (error) {
@@ -51,6 +52,26 @@ module.exports = {
                 console.log(error);
             }
         },
+        // retrive checkout session and add purchased item to user's products
+        buyMimo: async (_, { sessionId }, { user }) => {
+
+            try {
+                if(!user) throw new Error("You must be connected");
+
+                const foundUser = await User.findById(user.id);
+
+                const session = await stripe.checkout.sessions.retrieve(sessionId);
+                const amount = session.display_items[session.display_items.length - 1].amount;
+                let name = session.display_items[session.display_items.length - 1].custom.name.toString();
+
+                foundUser.products.push({ mimoId: name, price: amount });
+                await foundUser.save();
+
+                return name;
+            } catch (error) {
+                console.error(error);
+            }
+        },
     },
     Mutation: {
         // Returns a token if credentials match the user, otherwise it returns the error
@@ -58,17 +79,16 @@ module.exports = {
             try {
                 const res = await User.findOne({ email: email });
                 if (!res) return { error: "User not found" };
-                console.log({res})
+
                 const passwordOk = await Bcrypt.compare(password, res.password);
                 if (!passwordOk) return { error: "Wrong password" };
-                // console.log(res._id)
+
                 const token = jwt.sign(
                     { id: res._id, email: res.email, role: res.role,},
                     process.env.JWT_SECRET,
                     { expiresIn: '24h' }
                 );
-                console.log("login token", token)
-                console.log("login res role", res.role )
+
                 return { token };
             } catch (error) {
                 console.error(error);
@@ -97,7 +117,6 @@ module.exports = {
         },
         // return a token of the user we want to connect at portal
         loginAs: async (_, { email }, { user }) => {
-            console.log("login as");
             try {
                 if(user.role !== "ADMIN") throw new Error("You must be admin");
                 const res = await User.findOne({ email: email });
@@ -107,13 +126,34 @@ module.exports = {
                     process.env.JWT_SECRET,
                     { expiresIn: '24h' }
                 );
-                console.log("login as token", token)
+
                 return { token };
-                // console.log("user loginas id ", user._id)
-                // return user._id;
             } catch (error) {
                 console.error(error)
             }
         }, 
-    }
+        // create Stripe checkout session 
+        checkoutSession: async (_, { userId, email, name, description, amount, successUrl, cancelUrl }) => {
+
+            const session = await stripe.checkout.sessions.create({
+                customer_email : email,
+                client_reference_id: userId,
+                payment_method_types: ['card'],
+                line_items: [{
+                  name: name,
+                  description: description,
+                  amount: amount * 100,
+                  currency: 'eur',
+                  quantity: 1,
+                }],
+                metadata: {
+                    user: userId,
+                },
+                success_url: `${successUrl}/session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: cancelUrl,
+            });
+
+            return session.id;
+        },
+    },
 }
