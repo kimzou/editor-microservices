@@ -15,6 +15,7 @@ import { Login } from "./routes/Login";
 import { Course } from "./routes/Course";
 import Success from "./routes/Course/Success"
 import Mimo from "./routes/Mimo/Mimo"
+import SF from "./routes/SF/SF"
 
 const App = () => {
 
@@ -49,6 +50,7 @@ console.log({email})
             <Route exact path="/course" component={Course} />
             <Route path="/mimo/:id" component={Mimo} />
             <Route path="/course/success/:session_id" component={Success} />
+            <Route path="sf" component={SF} />
             <Route component={NoMatch} />
           </Switch>
         </Router>

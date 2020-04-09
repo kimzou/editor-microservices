@@ -56,6 +56,8 @@ const Home = props => {
 			<LogOut />
 			<hr />
 			<button onClick={() => history.push("/")}>Home</button>
+			<hr />
+			<button onClick={() => history.push("/sf")}>SF</button>
 		</>
 	);
 };
