@@ -28,6 +28,7 @@
     "passport-google-oauth20": "^2.0.0",
     "passport-linkedin-oauth2": "^2.0.0",
     "passport-twitter": "^1.0.4",
-    "pug": "^2.0.4"
+    "pug": "^2.0.4",
+    "stripe": "^8.37.0"
   }
 }

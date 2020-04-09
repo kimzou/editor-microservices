@@ -15,15 +15,15 @@ const strategies = require('./passport_strategies');
 
 const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
-    playground: false,
+    playground: true,
     context: ({ req }) => {
         try {
             const token = req.headers.authorization;
             const loginas = req.headers.loginas;
-            console.log("in index user", {token, loginas})
+            // console.log("in index user", {token, loginas})
             if (token === undefined) return null;
             const user = verify(token, process.env.JWT_SECRET);
-            console.log("user connected in user index", {user})
+            // console.log("user connected in user index", {user})
             return { user, loginas };
         } catch (error) {
             console.error(error)

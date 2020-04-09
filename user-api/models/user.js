@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const ProductSchema = require("./product");
 
 const UserSchema = new Schema({
     firstname: String,
@@ -14,6 +15,8 @@ const UserSchema = new Schema({
         type: String,
         enum: ["STUDENT", "INSTRUCTOR", "ADMIN"],
     },
+    products: ProductSchema,
+    stripeId: String,
     google: {
         id: String,
         lastName: String,
