@@ -28,8 +28,14 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+// function to generate short-lived token
 function generateToken(user) {
-    return jwt.sign({ email: user.email }, process.env.API_SECRET);
+    return jwt.sign({ email: user.email }, process.env.API_SECRET, { expiresIn: '5m' });
+}
+
+// function to generate refresh token
+function generateRefreshToken(user) {
+    return jwt.sign({ email: user.email }, process.env.API_SECRET, { expiresIn: '10d' });
 }
 
 function getHashedPassword(password) {
