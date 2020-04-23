@@ -254,8 +254,7 @@ module.exports = {
             } catch (error) {
                 console.error(error);
             }
-        }
-    }
+        },
         // return a token of the user we want to connect at portal
         loginAs: async (_, { email }, { user }) => {
             try {
