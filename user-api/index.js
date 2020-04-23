@@ -4,8 +4,7 @@ const { buildFederatedSchema } = require('@apollo/federation');
 const express = require('express');
 const passport = require('passport');  
 
-require('dotenv').config()
-const { verify } = require("jsonwebtoken");
+require('dotenv').config();
 
 const resolvers = require('./resolvers');
 const typeDefs = require('./typeDefs/typeDefs');
@@ -38,17 +37,18 @@ app.use(passport.session());
 
 mongoose
     .connect(`mongodb+srv://${MONGO_USER}:${MONGO_PASS}@dnd-dtit4.mongodb.net/${MONGO_DB}?retryWrites=true&w=majority`,
-        { useNewUrlParser: true, useUnifiedTopology: true }, () => {
-        app.listen(4001, () => {
-            console.log(`Server listening on port http://localhost:4001/graphql`);
-        });
+    { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
+    .then(() => {
+        app.listen({ port: 4001 }, () =>
+            console.log(`Server ready at http://localhost:4001`)
+        );
     })
     .catch(e => console.error(e));
 
 passport.serializeUser(function(user, done) {
     done(null, user);
 });
-    
+
 passport.deserializeUser(function(user, done) {
     done(null, user);
 });
@@ -63,10 +63,15 @@ app.get('/',
         res.render('home');
 });
 
-app.get('/login',
-    function(req, res) {
-        res.render('login');
-});
+// app.get('/login',
+//     function(req, res) {
+//         res.render('login');
+// });
+
+// app.get('/register',
+//     function(req, res) {
+//         res.render('register');
+// });
 
 app.get('/auth/google',
     passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -78,7 +83,7 @@ app.get('/auth/google/callback',
         res.redirect('/');
 });
 
-app.get('/auth/facebook', 
+app.get('/auth/facebook',
     passport.authenticate('facebook', { scope: ['email', 'user_gender'] }));
 
 app.get('/auth/facebook/callback',
@@ -87,13 +92,13 @@ app.get('/auth/facebook/callback',
 app.get('/auth/linkedin',
   passport.authenticate('linkedin', { state: 'SOME STATE'  }));
 
-app.get('/auth/linkedin/callback', 
+app.get('/auth/linkedin/callback',
     passport.authenticate('linkedin', { successRedirect: '/', failureRedirect: '/login'}));
 
 app.get('/auth/twitter',
     passport.authenticate('twitter'));
 
-app.get('/auth/twitter/callback', 
+app.get('/auth/twitter/callback',
     passport.authenticate('twitter', { failureRedirect: '/login' }),
     function(req, res) {
         // Successful authentication, redirect home.

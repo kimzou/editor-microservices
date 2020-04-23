@@ -8,24 +8,40 @@ const user = gql`
         globalExam(token: String!): User
         buyMimo(sessionId: String!): String
     }
+
     extend type Mutation {
-        register(email: String!, password: String!): AuthPlayload
-        login(email: String!, password: String!): AuthPlayload
+        register(email: String!, password: String!): AuthPayload,
+        login(email: String!, password: String!): AuthPayload,
+        confirmMail(emailToken: String!, email: String!): AuthPayload,
+        triggerPasswordReset(email: String!): Boolean,
+        passwordReset(
+            email: String!
+            resetToken: String!
+            password: String!
+        ): UserIdPayload!,
+        changePassword(oldPassword: String!, newPassword: String!): UserIdPayload!
         loginAs(email: String!): AuthPlayload
         checkoutSession(userId: String, email: String, name: String!, description: String, amount: Int!, successUrl: String!, cancelUrl: String!): String
     }
+
     type User {
         id: ID!
         firstname: String
         lastname: String
-        email: String
+        email: String!
+        verifiedAccount: Boolean
         role: Role
         products: [Product]
         stripeId: String 
     }
-    type AuthPlayload {
+
+    type AuthPayload {
         token: String
+        user: User!
         error: String
+    }
+    type UserIdPayload {
+        id: ID!
     }
     enum Role {
         STUDENT
