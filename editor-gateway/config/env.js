@@ -1,0 +1,12 @@
+require('dotenv').config()
+
+module.exports = {
+  URL_AUTH_SERVICE: process.env.URL_AUTH_SERVICE,
+  URL_EDITOR_SERVICE: process.env.URL_EDITOR_SERVICE,
+  URL_EVALVE_SERVICE: process.env.URL_EVALVE_SERVICE,
+  URL_EXTERNAL_SERVICES: process.env.URL_EXTERNAL_SERVICES,
+  PORT: process.env.PORT,
+  GRANTED_ORIGINS: process.env.GRANTED_ORIGINS,
+  SECRET: process.env.SECRET,
+  ALLOWED_MAC_ADDRESSES: process.env.ALLOWED_MAC_ADDRESSES
+};

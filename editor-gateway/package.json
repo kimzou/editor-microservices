@@ -1,21 +1,35 @@
 {
-  "name": "editor-gateway",
+  "name": "gateway",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "build": "NODE_ENV=production babel ./src -d dist --presets env",
+    "start": "nodemon ./src/index.js",
+    "clean": "rm -rf node_modules/ && npm i"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@apollo/gateway": "^0.11.7",
-    "apollo-server": "^2.11.0",
+    "@apollo/gateway": "^0.16.2",
+    "apollo-server-express": "^2.14.1",
+    "body-parser": "^1.19.0",
+    "compression": "^1.7.4",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "graphql": "^14.6.0",
+    "ioredis": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.2"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-module-resolver": "^3.0.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "prettier": "2.0.5"
   }
 }

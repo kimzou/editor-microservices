@@ -1,97 +1,69 @@
-const { ApolloServer } = require('apollo-server-express');
-const { ApolloGateway, RemoteGraphQLDataSource } = require("@apollo/gateway");
-const { errorHandling } = require("./utils/helpers");
-const { verify } = require('jsonwebtoken');
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config()
+const express = require("express");
+const { ApolloServer } = require("apollo-server-express");
+const { ApolloGateway } = require("@apollo/gateway");
+
+const cors = require("cors");
 const bodyParser = require("body-parser");
+const compression = require("compression");
+const cookieParser = require("cookie-parser");
 
-const { URI_USER, URI_MIMO, LOCAL_USER, LOCAL_MIMO } = process.env;
+const { ContextObject } = require("./config/contextObject");
+const { URL_AUTH_SERVICE, URL_EDITOR_SERVICE, PORT } = require("./config/env");
 
-class AuthenticatedDataSource extends RemoteGraphQLDataSource {
-    // set headers before calling services
-    willSendRequest({ request, context }) {
-        // console.log('gateawy', request.http.headers)
-        if(context.id) request.http.headers.set("userID", context.id);
-        if(context.token) request.http.headers.set("authorization", context.token);
-        if(context.loginas) request.http.headers.set("loginas", context.loginas);
-    }
+const app = express();
 
-    // didReceiveResponse({ request, response, context }) {
-    //     console.log("did recived name", this.name)
-    //     // try {
-    //     //     // const cookie = request.http.headers.get('Cookie');
-    //     //     // if (cookie) {
-    //     //     //     context.responseCookies.push(cookie);
-    //     //     // }
-    //     //     console.log({response})
-    //     //     console.log({request})
-    //     //     console.log({context})
-    //     // } catch (error) {
-    //     //     console.error(error)
-    //     // }
+app.use(
+    cors({
+        credentials: true,
+        origin: "http://localhost:3000"
+    })
+);
 
-    //     // Return the response back, even when unchanged.
-    //     console.log({response});
-    //     console.log({context});
-    //     console.log({request});
-    //     return { message: request }
-    //     return response;
-    // }
-};
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(cookieParser());
 
-// list of all services connected to the gateway
+app.use(compression());
+
 const gateway = new ApolloGateway({
-    serviceList: [
-        { name: 'users', url: LOCAL_USER },
-        { name: 'mimos', url: LOCAL_MIMO },
-    ],
-    buildService({ name, url }) {
-        return new AuthenticatedDataSource({ name, url });
-    },
-    // debug: true,
+  serviceList: [
+    { name: "auth", url: URL_AUTH_SERVICE }
+    // { name: "lms", url: URL_EDITOR_SERVICE }
+  ],
+  buildService({ name, url }) {
+    return new ContextObject({ name, url });
+  },
+  // Experimental: Enabling this enables the query plan view in Playground.
+  __exposeQueryPlanExperimental: false,
+  formatError: error => new Error(`Internal server error: ${error}`) // TODO Handle Errors
 });
 
 const server = new ApolloServer({
-    gateway,
-    subscriptions: false,
-    cors: false,
-    context: ({ req, res }) => {
-        try {
-            console.log(res.getHeaders())
-            // console.log("gateway context auto", req.headers.authorization)
-            // const tokenBearer = req.headers.authorization || "";
-            // console.log("headers login as", req.headers.loginas)
-            // const loginas = req.headers.loginas || "";
-            // console.log("login as gateway", {loginas})
-            // if(tokenBearer === "" || undefined) return;
-            // const token = tokenBearer.replace("Bearer ", "");
-            // const { role } = verify(token, process.env.JWT_SECRET);
-            // console.log("gateway", {token, role})
-            // return role === "ADMIN" ? { token, loginas } : { token };
-            // console.log("gateaway res.cookie", res.cookie);
-            // console.log("req.headers", req.headers)
-            // console.log("res.headers", res.headers)
-            // console.log("req.cookie", res.cookie)
-            return { res }
-        } catch (error) {
-            console.error(error)
-        }
-    },
-    // custom errors send to the client
-    formatError: err => errorHandling(err),
+  gateway,
+  subscriptions: false,
+  context: async ({ req, res }) => {
+    // console.log("context", req.headers);
+    // console.log("context cookies", req.headers.cookie["menu-state"]); //undefined
+    // console.log("context cookies", req.cookies["x-token"]); // OK
+    // console.log("context cookies", req.headers.cookie); //all cookies
+
+    // console.log("+++++req headers in context ", req.headers);
+
+    // console.log("req.headers['authorization']", res.cookies["authorization"]); // undefined
+    // console.log("req.headers['x-token']", ["x-token"]);
+    // const accessToken =
+    //   req.headers["x-token"] || req.headers["authorization"] || "";
+        const accessToken =
+          req.cookies["x-token"] || "";
+    // const accessToken = (await req.headers["authorization"]) || "";
+    console.log("context access token", {accessToken})
+    return { accessToken, res };
+  },
+  formatError: err => new Error(`Internal server error: ${err}`) // TODO Handle Errors
 });
 
-const corsOptions = {
-    credentials: true,
-    origin: 'http://localhost:3000',
-}
+server.applyMiddleware({ app, path: "/graphql", cors: false });
 
-const app = express();
-// app.use(cors(corsOptions));
-// app.use(bodyParser.json())
-server.applyMiddleware({ app, cors: corsOptions });
-// server.applyMiddleware({ app, cors: false });
-
-app.listen(4002, () => console.log(`Server ready at http://localhost:4002/graphql`));
+app.listen(PORT, () => {
+    console.log(`Gateway successfully started on port ${PORT}`);
+});

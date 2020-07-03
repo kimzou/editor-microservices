@@ -2,12 +2,12 @@ const mongoose = require('mongoose');
 const { ApolloServer } = require('apollo-server-express');
 const { buildFederatedSchema } = require('@apollo/federation');
 const express = require('express');
-const passport = require('passport');  
+const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const FacebookStrategy = require('passport-facebook').Strategy;
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
-
+const cors = require('cors');
 require('dotenv').config()
 const { verify } = require("jsonwebtoken");
 
@@ -19,23 +19,54 @@ const User = require('./models/user');
 const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
     playground: true,
-    context: ({ req }) => {
+    cors: false,
+    context: ({ req, res }) => {
         try {
-            const token = req.headers.authorization;
-            const loginas = req.headers.loginas;
-            // console.log("in index user", {token, loginas})
-            if (token === undefined) return null;
-            const user = verify(token, process.env.JWT_SECRET);
-            // console.log("user connected in user index", {user})
-            return { user, loginas };
+              console.log("context");
+              // console.log("res = ", res)
+              // console.log("context req headers",req.headers)
+              // console.log("user api req headers in context", res.getHeaders())
+              // console.log(
+              //   "req.headers['authorization']",
+              //   req.headers["authorization"]
+            //   // ); // undefined
+            //   console.log("req.headers['x-token']", req.headers["x-token"]); //null
+              const accessToken =
+                req.headers["x-token"] || "";
+              // const httpCookie = req.headers["x-token"] || req.headers["authorization"] || "";
+              // const loginas = req.headers.loginas;
+              // // console.log("in index user", {token, loginas})
+              // if (token === undefined) return null;
+            //   console.log("--httpcookie---", httpCookie);
+              // if(httpCookie == "null") {
+              //     console.log("---in if")
+              //     throw Error("No cookie");
+              // }
+              // console.log("secret", process.env.JWT_SECRET);
+              // const decodedCookie = verify(httpCookie, process.env.JWT_SECRET);
+              // // console.log("user connected in user index", {user})
+              // console.log("decoded cookie", decodedCookie)
+              // console.log("user", user)
+              // return { user, loginas }
+              // console.log("user context res cookie", res.cookie)
+              return { res, accessToken };
         } catch (error) {
             console.error(error)
         }
     }
+    // context: ({ res }) => ({
+    //     res
+    // }),
 });
 
+const corsOptions = {
+    credentials: true,
+    origin: 'http://localhost:3000',
+}
+
 const app = express();
-server.applyMiddleware({ app });
+server.applyMiddleware({ app, cors: corsOptions });
+// app.use(cors(corsOptions))
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -51,7 +82,7 @@ mongoose
 passport.serializeUser(function(user, done) {
     done(null, user);
 });
-    
+
 passport.deserializeUser(function(user, done) {
     done(null, user);
 });
@@ -224,7 +255,7 @@ app.get('/auth/google/callback',
         res.redirect('/');
 });
 
-app.get('/auth/facebook', 
+app.get('/auth/facebook',
     passport.authenticate('facebook', { scope: ['email', 'user_gender'] }));
 
 app.get('/auth/facebook/callback',
@@ -233,13 +264,13 @@ app.get('/auth/facebook/callback',
 app.get('/auth/linkedin',
   passport.authenticate('linkedin', { state: 'SOME STATE'  }));
 
-app.get('/auth/linkedin/callback', 
+app.get('/auth/linkedin/callback',
     passport.authenticate('linkedin', { successRedirect: '/', failureRedirect: '/login'}));
 
 app.get('/auth/twitter',
     passport.authenticate('twitter'));
 
-app.get('/auth/twitter/callback', 
+app.get('/auth/twitter/callback',
     passport.authenticate('twitter', { failureRedirect: '/login' }),
     function(req, res) {
         // Successful authentication, redirect home.

@@ -75,23 +75,40 @@ module.exports = {
     },
     Mutation: {
         // Returns a token if credentials match the user, otherwise it returns the error
-        login: async (_, { email, password }) => {
+        login: async (_, { email, password }, { res } ) => {
+            console.log('!!!!!!! in login')
+            // console.log("===== in login", {res});
             try {
-                const res = await User.findOne({ email: email });
-                if (!res) return { error: "User not found" };
+                const result = await User.findOne({ email: email });
+                if (!result) return { error: "User not found" };
 
-                const passwordOk = await Bcrypt.compare(password, res.password);
+                const passwordOk = await Bcrypt.compare(password, result.password);
                 if (!passwordOk) return { error: "Wrong password" };
 
                 const token = jwt.sign(
-                    { id: res._id, email: res.email, role: res.role,},
+                    { id: result._id, email: result.email, role: result.role,},
                     process.env.JWT_SECRET,
-                    { expiresIn: '24h' }
+                    { expiresIn: '7d' }
                 );
+                // console.log("$$$$token", token)
 
+                // res.cookie("x-token", token, {
+                //   httpOnly: true,
+                //   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+                //   path: "/"
+                // });
+                // console.log("res.getHeaders()['set-cookie']", res.getHeaders()["set-cookie"]) //authorization & x-token // server ?
+                // console.log("res.req.headers", res.req.headers); //x-token nul // client ?
+                // console.log({res})
+                // console.log("res.hearders", res.headers)
+                // console.log("res.req.hearders", res.req.headers)
+                // console.log("req.hearders", req.headers)
+                // console.log("res.cookie", req.response.cookie)
+                // return true;
                 return { token };
             } catch (error) {
                 console.error(error);
+                // return false;
             }
         },
         // Search if the email is already in the database, if not, create a new user
@@ -104,11 +121,11 @@ module.exports = {
                 newUser.email = email;
                 newUser.password = await Bcrypt.hash(password, 10);
                 await newUser.save();
-                
+
                 const token = jwt.sign(
                     { id: newUser._id, email: email },
                     process.env.JWT_SECRET,
-                    { expiresIn: '24h' }
+                    { expiresIn: '7d' }
                 );
                 return { token: token };
             } catch (error) {
@@ -131,8 +148,8 @@ module.exports = {
             } catch (error) {
                 console.error(error)
             }
-        }, 
-        // create Stripe checkout session 
+        },
+        // create Stripe checkout session
         checkoutSession: async (_, { userId, email, name, description, amount, successUrl, cancelUrl }) => {
 
             const session = await stripe.checkout.sessions.create({
