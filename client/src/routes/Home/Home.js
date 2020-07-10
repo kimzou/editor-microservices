@@ -10,7 +10,7 @@ import LogOut from '../../components/log-out';
 import { AuthContext, useAuth } from '../../context/authContext';
 
 const ACTUAL_USER = gql`
-	query me {
+	query {
 		me {
 			email
 			role
@@ -21,21 +21,22 @@ const ACTUAL_USER = gql`
 const Home = props => {
 	// console.log("props", props.token)
 	const { token, email } = useContext(AuthContext);
-	console.log("home email", email)
 	const { updateEmail } = useAuth();
 	const history = useHistory();
 	const client = useApolloClient();
 
 	console.log("home use token", token);
-			
+
 	const { _, __, data, refetch } = useQuery(ACTUAL_USER, {
 		onError(error) {
 			console.log('Error : ', error)
 		},
-		onCompleted(data) {
-			console.log("on complete", {data})
-			updateEmail(data.me.email);
-			client.writeData({ data: { isAdmin: data.me.role === "ADMIN" ? true : false }})
+		onCompleted({ me }) {
+			console.log({me})
+			if(!data.me) return null;
+			console.log("on complete data.me", data.me)
+			// client.writeData({ data: { isAdmin: data.me.role === "ADMIN" ? true : false } })
+			client.writeData({ data: { isLogged: true } })
 		}
 	});
 

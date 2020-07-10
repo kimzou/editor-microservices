@@ -12,19 +12,14 @@ import {
 import { useAuth } from "../../context/authContext";
 import { useApolloClient } from "@apollo/react-hooks";
 
-// const LOGIN_MUTATION = gql`
-//     mutation login($email: String!, $password: String!) {
-//         login(email: $email, password: $password) {
-//             token
-//             error
-//         }
-//     }
-// `;
-
 const LOGIN_MUTATION = gql`
-  mutation login($email: String!, $password: String!) {
-    login(email: $email, password: $password)
-  }
+    mutation login($email: String!, $password: String!) {
+        login(email: $email, password: $password) {
+            token
+            refreshToken
+            error
+        }
+    }
 `;
 
 const Login = props => {
@@ -41,12 +36,6 @@ const Login = props => {
         },
         async onCompleted(data) {
             if (data) {
-                // set the auth provider
-                // console.log("on complete login", data.login.token)
-                // updateToken(data.login.token);
-                // updateEmail(email);
-                // localStorage.setItem('token', data.login.token, { expires: data.login.tokenExpiration });
-                // client.writeData({ data: { token: data.login.token }});
                 props.history.push('/');
             } else if (data.login.error) {
                 alert(data.login.error);

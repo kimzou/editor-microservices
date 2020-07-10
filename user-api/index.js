@@ -8,48 +8,61 @@ const FacebookStrategy = require('passport-facebook').Strategy;
 const LinkedInStrategy = require('passport-linkedin-oauth2').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const cors = require('cors');
-require('dotenv').config()
-const { verify } = require("jsonwebtoken");
+require('dotenv').config();
+const jwt = require("jsonwebtoken");
 
 const resolvers = require('./resolvers');
 const typeDefs = require('./typeDefs/typeDefs');
-const { MONGO_USER, MONGO_PASS, MONGO_DB } = process.env;
+const {
+    MONGO_USER,
+    MONGO_PASS,
+    MONGO_DB,
+    JWT_SECRET,
+    JWT_REFRESH_SECRET
+} = process.env;
 
 const User = require('./models/user');
 const server = new ApolloServer({
     schema: buildFederatedSchema([{ typeDefs, resolvers }]),
     playground: true,
     cors: false,
-    context: ({ req, res }) => {
+    context: async ({ req, res, connection }) => {
+        //TODO: differencier les connexions
+        if(req) { console.log("req") }
+        if(res) { console.log("res") }
+        console.log({ connection})
         try {
-              console.log("context");
-              // console.log("res = ", res)
-              // console.log("context req headers",req.headers)
-              // console.log("user api req headers in context", res.getHeaders())
-              // console.log(
-              //   "req.headers['authorization']",
-              //   req.headers["authorization"]
-            //   // ); // undefined
+            // console.log("index context request user", req.user, {user})
+            // console.log("context req headers",req.headers)
+            // console.log(
+            //   "req.headers['authorization']",
+            //   req.headers["authorization"]
+        //   // ); // undefined
             //   console.log("req.headers['x-token']", req.headers["x-token"]); //null
-              const accessToken =
-                req.headers["x-token"] || "";
-              // const httpCookie = req.headers["x-token"] || req.headers["authorization"] || "";
-              // const loginas = req.headers.loginas;
-              // // console.log("in index user", {token, loginas})
-              // if (token === undefined) return null;
-            //   console.log("--httpcookie---", httpCookie);
-              // if(httpCookie == "null") {
-              //     console.log("---in if")
-              //     throw Error("No cookie");
-              // }
-              // console.log("secret", process.env.JWT_SECRET);
-              // const decodedCookie = verify(httpCookie, process.env.JWT_SECRET);
-              // // console.log("user connected in user index", {user})
-              // console.log("decoded cookie", decodedCookie)
-              // console.log("user", user)
-              // return { user, loginas }
-              // console.log("user context res cookie", res.cookie)
-              return { res, accessToken };
+            console.log("req.headers", req.headers)
+            const accessToken = req.headers["x-token"];
+            const refreshToken = req.headers["x-refresh-token"];
+            let user;
+            console.log("index context", {accessToken, refreshToken})
+            if (accessToken === 'null'|| refreshToken === 'null') return { res };
+            console.log("if")
+            try {
+                const decodeAccessToken = jwt.decode(accessToken, JWT_SECRET);
+                console.log({decodeAccessToken});
+                console.log("id", decodeAccessToken.id);
+
+                user = await User.findById(decodeAccessToken.id);
+
+                console.log('index user', {user})
+                // req.user = user;
+                // console.log("context req.user", req.user);
+                if (!user) return new Error("User not found");
+                return {
+                    user
+                };
+            } catch (error) {
+                console.error(error);
+            }
         } catch (error) {
             console.error(error)
         }

@@ -7,23 +7,29 @@ const stripe = require("./stripe");
 module.exports = {
     Query: {
         // get the actual connected user
-        me: async (_, __, { user, loginas } ) => {
+        me: async (_, __, { user } ) => {
+            console.log("me context")
             // console.log("me user", {user})
             // console.log("me logonas", {loginas})
             try {
-                //TODO: check roles
-                if (!user) return new Error('You must be authentificated !');
+                //TODO: display when the user is connected or not
+                console.log("in me", {user})
+                if (!user) return null; // if no user return null
+                console.log("in me iffff")
+                // return await User.findById(user._id);
+                // if (!user) return new Error('You must be authentificated !');
                 // const contextUser = await User.findById(user.id);
                 // const loginAsUser = await User.findById(loginAs.id);
                 // return loginAs ? { contextUser, loginAsUser } : contextUser;
-                let loginAsDecode;
-                if (loginas !== undefined) loginAsDecode = jwt.verify(loginas, process.env.JWT_SECRET);
-                const userLogged = await User.findById(loginAsDecode ? loginAsDecode.id : user.id);
+                // let loginAsDecode;
+                // if (loginas !== undefined) loginAsDecode = jwt.verify(loginas, process.env.JWT_SECRET);
+                // const userLogged = await User.findById(loginAsDecode ? loginAsDecode.id : user.id);
                 // console.log("me userLogged", userLogged);
-                return userLogged;
+
+                return await user;
                 // return loginAs ? await User.findById(loginAs.id) : await User.findById(user.id);
             } catch (error) {
-                console.error(error);
+                console.error("jhfjkj", error);
             }
         },
         // get all users
@@ -75,7 +81,7 @@ module.exports = {
     },
     Mutation: {
         // Returns a token if credentials match the user, otherwise it returns the error
-        login: async (_, { email, password }, { res } ) => {
+        login: async (_, { email, password }, context ) => {
             console.log('!!!!!!! in login')
             // console.log("===== in login", {res});
             try {
@@ -88,24 +94,22 @@ module.exports = {
                 const token = jwt.sign(
                     { id: result._id, email: result.email, role: result.role,},
                     process.env.JWT_SECRET,
+                    //TODO: set expires to 15 minutes
+                    { expiresIn: '15min' }
+                );
+
+                const refreshToken = jwt.sign(
+                    { id: result._id },
+                    process.env.JWT_REFRESH_SECRET,
                     { expiresIn: '7d' }
                 );
-                // console.log("$$$$token", token)
 
-                // res.cookie("x-token", token, {
-                //   httpOnly: true,
-                //   maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-                //   path: "/"
-                // });
-                // console.log("res.getHeaders()['set-cookie']", res.getHeaders()["set-cookie"]) //authorization & x-token // server ?
-                // console.log("res.req.headers", res.req.headers); //x-token nul // client ?
-                // console.log({res})
-                // console.log("res.hearders", res.headers)
-                // console.log("res.req.hearders", res.req.headers)
-                // console.log("req.hearders", req.headers)
-                // console.log("res.cookie", req.response.cookie)
-                // return true;
-                return { token };
+                console.log('login', {token, refreshToken})
+
+                return {
+                    token,
+                    refreshToken,
+                };
             } catch (error) {
                 console.error(error);
                 // return false;

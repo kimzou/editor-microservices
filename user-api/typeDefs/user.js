@@ -24,7 +24,7 @@ const user = gql`
     ): String
   }
   type User {
-    id: ID!
+    _id: ID
     firstname: String
     lastname: String
     email: String
@@ -34,6 +34,7 @@ const user = gql`
   }
   type AuthPlayload {
     token: String
+    refreshToken: String
     error: String
   }
   enum Role {

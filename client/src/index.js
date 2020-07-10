@@ -64,33 +64,53 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 //       uri: 'http://localhost:4002/graphql',
 //       credentials: 'include',
 //     }),
+//   // request: (operation) => {
+//   //   operation.setContext({
+//   //     headers: {
+//   //       authorization: token ? `Bearer ${token}` : ''
+//   //     }
+//   //   })
+//   // },
+//   onError: ({ graphQLErrors, networkError, response, operation}) => {
+//     console.log("errrorr", { graphQLErrors, response})
+//     console.log("nestwork status: ", networkError.statusCode)
+//   },
 //   credentials: 'include',
 //   fetchOptions: {
 //     credentials: 'include'
 //   }
 // });
 
-const client = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: new HttpLink({
-    uri: "http://localhost:4002/graphql",
-    credentials: "include"
-  }),
-});
-
 // const client = new ApolloClient({
-//   uri: 'http://localhost:4002/graphql',
-//   // uri: 'http://localhost:4000',
 //   cache: new InMemoryCache(),
-//   credentials: 'include',
-//   request: async operation => {
-//     operation.setContext({
-//       fetchOptions: {
-//         credentials: 'include'
-//       }
-//     })
+//   link: new HttpLink({
+//     uri: "http://localhost:4002/graphql",
+//     credentials: "include"
+//   }),
+//   onError: ({ graphQLErrors, networkError, response, operation }) => {
+//     console.log("errrorr", { graphQLErrors, response })
+//     console.log("nestwork status: ", networkError.statusCode)
 //   },
-// })
+// });
+
+const client = new ApolloClient({
+  link: new HttpLink({
+    uri: 'http://localhost:4002/graphql',
+    credentials: 'include',
+  }),
+  cache: new InMemoryCache(),
+  onError: ({ graphQLErrors, networkError, response, operation }) => {
+    console.log("errrorr", { graphQLErrors, response })
+    console.log("nestwork status: ", networkError.statusCode)
+  },
+  request: async operation => {
+    operation.setContext({
+      fetchOptions: {
+        credentials: 'include'
+      }
+    })
+  },
+})
 
 ReactDOM.render(
     <ApolloProvider client={client}>

@@ -8,5 +8,6 @@ module.exports = {
   PORT: process.env.PORT,
   GRANTED_ORIGINS: process.env.GRANTED_ORIGINS,
   SECRET: process.env.SECRET,
+  REFRESH_SECRET: process.env.REFRESH_SECRET,
   ALLOWED_MAC_ADDRESSES: process.env.ALLOWED_MAC_ADDRESSES
 };

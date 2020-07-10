@@ -6,9 +6,16 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const compression = require("compression");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
 const { ContextObject } = require("./config/contextObject");
-const { URL_AUTH_SERVICE, URL_EDITOR_SERVICE, PORT } = require("./config/env");
+const {
+  URL_AUTH_SERVICE,
+  URL_EDITOR_SERVICE,
+  PORT,
+  SECRET,
+  REFRESH_SECRET
+} = require("./config/env");
 
 const app = express();
 
@@ -21,7 +28,10 @@ app.use(
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cookieParser());
+app.use(cookieParser([
+  SECRET,
+  REFRESH_SECRET
+]));
 
 app.use(compression());
 
@@ -41,23 +51,23 @@ const gateway = new ApolloGateway({
 const server = new ApolloServer({
   gateway,
   subscriptions: false,
-  context: async ({ req, res }) => {
+  context: async ({ req, res, connection }) => {
+    console.log({connection})
+    if (req) { console.log("req") }
+    if (res) { console.log("res") }
     // console.log("context", req.headers);
-    // console.log("context cookies", req.headers.cookie["menu-state"]); //undefined
-    // console.log("context cookies", req.cookies["x-token"]); // OK
-    // console.log("context cookies", req.headers.cookie); //all cookies
-
-    // console.log("+++++req headers in context ", req.headers);
-
-    // console.log("req.headers['authorization']", res.cookies["authorization"]); // undefined
-    // console.log("req.headers['x-token']", ["x-token"]);
     // const accessToken =
     //   req.headers["x-token"] || req.headers["authorization"] || "";
-        const accessToken =
-          req.cookies["x-token"] || "";
+    const accessToken = req.signedCookies["x-token"] || "";
+    const refreshToken = req.signedCookies["x-refresh-token"] || "";
     // const accessToken = (await req.headers["authorization"]) || "";
-    console.log("context access token", {accessToken})
-    return { accessToken, res };
+    console.log("context access token", {accessToken, refreshToken});
+    // if (!!accessToken || !!refreshToken) return { res };
+    return {
+      res,
+      accessToken,
+      refreshToken
+    };
   },
   formatError: err => new Error(`Internal server error: ${err}`) // TODO Handle Errors
 });
