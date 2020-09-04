@@ -10,13 +10,14 @@ class ContextObject extends RemoteGraphQLDataSource {
     // as a header called `user-id`
     // console.log(`Send Context To [${name}] at ${url}`, request);
     // console.log("will send Context : ", context);
+    //TODO: change to condition ? set : not set
     request.http.headers.set(
       "x-token", // null
-      context.accessToken ? context.accessToken : null
+      context.accessToken ? context.accessToken : ""
     );
     request.http.headers.set(
       "x-refresh-token", // null
-      context.refreshToken ? context.refreshToken : null
+      context.refreshToken ? context.refreshToken : ""
     );
     console.log("++++++wiiil", request.http.headers);
   }
@@ -29,10 +30,10 @@ class ContextObject extends RemoteGraphQLDataSource {
     //   console.log("=== did response.data", response.data);
 
     // Parse the Server-Id header and add it to the array on context
-    const cxtAccessToken = context.accessToken ? context.accessToken : null;
+    const cxtAccessToken = context.accessToken ? context.accessToken : "";
     // const loginToken = response.data.login ? response.data.login.token : null;
     // const refreshToken = response.data.login ? response.data.login.refreshToken : null;
-    const cxtRefreshToken = context.refreshToken ? context.refreshToken : null;
+    const cxtRefreshToken = context.refreshToken ? context.refreshToken : "";
     // console.log("response.data.login", response.data.login);
     // console.log("response.data.login.token", response.data.login.token);
     console.log("didddd recived", { cxtAccessToken, cxtRefreshToken });
@@ -44,9 +45,7 @@ class ContextObject extends RemoteGraphQLDataSource {
     // console.log("singned cookie", singedCookie)
     console.log("ddiiddd recived response.data.login", response.data.login);
     const accessToken = response.data.login ? response.data.login.token : null;
-    const refreshToken = response.data.login
-      ? response.data.login.refreshToken
-      : null;
+    const refreshToken = response.data.login ? response.data.login.refreshToken: null;
     if (!accessToken || !refreshToken) return response;
     console.log("if")
     try {

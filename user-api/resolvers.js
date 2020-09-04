@@ -14,7 +14,7 @@ module.exports = {
             try {
                 //TODO: display when the user is connected or not
                 console.log("in me", {user})
-                if (!user) return null; // if no user return null
+                if (!user) return null; // in client, redirect to login page
                 console.log("in me iffff")
                 // return await User.findById(user._id);
                 // if (!user) return new Error('You must be authentificated !');
@@ -95,7 +95,7 @@ module.exports = {
                     { id: result._id, email: result.email, role: result.role,},
                     process.env.JWT_SECRET,
                     //TODO: set expires to 15 minutes
-                    { expiresIn: '15min' }
+                    { expiresIn: '1min' }
                 );
 
                 const refreshToken = jwt.sign(

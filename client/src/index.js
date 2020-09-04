@@ -105,6 +105,9 @@ const client = new ApolloClient({
   },
   request: async operation => {
     operation.setContext({
+      headers: {
+        Authorization: `Bearer ${process.env.REACT_APP_STRIPE_PUB_KEY}`
+      },
       fetchOptions: {
         credentials: 'include'
       }

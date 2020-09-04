@@ -17,7 +17,7 @@ const GET_COURSE_AND_USER_INFO = gql`
             }
         }
         me {
-            id
+            _id
             email
             products {
                 mimoId
@@ -38,24 +38,24 @@ const BuyMimo =  ({ userId, price, email, name, description }) => {
         onError(error) { console.error(error) },
         async onCompleted({ checkoutSession }) {
             const stripe = await loadStripe(process.env.REACT_APP_STRIPE_PUB_KEY);
-            const { error } = await stripe.redirectToCheckout({ 
+            const { error } = await stripe.redirectToCheckout({
                 sessionId: checkoutSession,
             });
-            if(error) console.error(error);          
+            if(error) console.error(error);
         }
     })
 
     const buying = () => {
         checkoutSession({
-            variables: { 
+            variables: {
                 userId: userId,
                 email: email,
                 name: name,
-                description: description, 
-                amount: price, 
-                successUrl: "http://localhost:3000/course/success", 
-                cancelUrl: "http://localhost:3000" 
-            } 
+                description: description,
+                amount: price,
+                successUrl: "http://localhost:3000/course/success",
+                cancelUrl: "http://localhost:3000"
+            }
         })
     }
 
@@ -87,12 +87,12 @@ const Course = () => {
                                     <br/>
                                     {mimo.description}<br/>
                                     {mimo.price}<br/>
-                                    {!productsId.includes(mimo.id) && index !== 0 && 
-                                        <BuyMimo 
-                                            price={mimo.price} 
-                                            email={me.email} 
+                                    {!productsId.includes(mimo.id) && index !== 0 &&
+                                        <BuyMimo
+                                            price={mimo.price}
+                                            email={me.email}
                                             userId= {me.id}
-                                            name={mimo.id} 
+                                            name={mimo.id}
                                             description={mimo.description}
                                         />
                                     }

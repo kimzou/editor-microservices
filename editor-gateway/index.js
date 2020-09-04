@@ -37,7 +37,8 @@ app.use(compression());
 
 const gateway = new ApolloGateway({
   serviceList: [
-    { name: "auth", url: URL_AUTH_SERVICE }
+    { name: "auth", url: URL_AUTH_SERVICE },
+    { name: "mimo", url:  "http://localhost:4000/graphql"}
     // { name: "lms", url: URL_EDITOR_SERVICE }
   ],
   buildService({ name, url }) {
@@ -51,10 +52,7 @@ const gateway = new ApolloGateway({
 const server = new ApolloServer({
   gateway,
   subscriptions: false,
-  context: async ({ req, res, connection }) => {
-    console.log({connection})
-    if (req) { console.log("req") }
-    if (res) { console.log("res") }
+  context: async ({ req, res }) => {
     // console.log("context", req.headers);
     // const accessToken =
     //   req.headers["x-token"] || req.headers["authorization"] || "";
@@ -66,7 +64,7 @@ const server = new ApolloServer({
     return {
       res,
       accessToken,
-      refreshToken
+      refreshToken,
     };
   },
   formatError: err => new Error(`Internal server error: ${err}`) // TODO Handle Errors
